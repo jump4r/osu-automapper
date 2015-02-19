@@ -1,4 +1,4 @@
-# osu!beatmapper
+# osu!automapper
 
 Automatic osu! beatmap generation given an offset, bpm, and difficulty.
 
