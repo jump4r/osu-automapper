@@ -17,20 +17,22 @@ namespace osu_automapper
             InitializeComponent();
         }
 
-        private NAudio.Wave.WaveFileReader wave = null;
+        private NAudio.Wave.BlockAlignReductionStream stream = null;
+
         private NAudio.Wave.DirectSoundOut output = null;
 
         private void button1_Click(object sender, EventArgs e)
         {
             OpenFileDialog open = new OpenFileDialog();
-            open.Filter = "Wave file (*.wav)|*.wav;";
+            open.Filter = "MP3 file (*.mp3)|*.mp3;";
             if (open.ShowDialog() != DialogResult.OK) return;
 
             DisposeWave();
 
-            wave = new NAudio.Wave.WaveFileReader(open.FileName);
+            NAudio.Wave.WaveStream pcm = NAudio.Wave.WaveFormatConversionStream.CreatePcmStream(new NAudio.Wave.Mp3FileReader(open.FileName));
+            stream = new NAudio.Wave.BlockAlignReductionStream(pcm);
             output = new NAudio.Wave.DirectSoundOut();
-            output.Init(new NAudio.Wave.WaveChannel32(wave));
+            output.Init(stream);
             output.Play();
 
             pauseButton.Enabled = true;
@@ -54,10 +56,10 @@ namespace osu_automapper
                 output = null;
             }
 
-            if (wave != null)
+            if (stream != null)
             {
-                wave.Dispose();
-                wave = null;
+                stream.Dispose();
+                stream = null;
             }
         }
 
