@@ -67,5 +67,24 @@ namespace osu_automapper
         {
 
         }
+
+        private void openOSUFile_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine("Search for .osu File");
+
+            OpenFileDialog open = new OpenFileDialog();
+            open.Filter = "OSU file (*.osu)|*.osu;";
+            if (open.ShowDialog() != DialogResult.OK) return;
+
+            Console.WriteLine("Opened .osu File");
+            // If path is good, lets get the file contents.
+            if (open.CheckPathExists) {
+                string fileRawText = System.IO.File.ReadAllText(open.FileName);
+                Console.WriteLine(open.FileName);
+
+                string[] fileSplitText = fileRawText.Split(new String[] { Environment.NewLine }, StringSplitOptions.None);
+                Console.WriteLine(fileSplitText[4]);
+            }
+        }
     }
 }

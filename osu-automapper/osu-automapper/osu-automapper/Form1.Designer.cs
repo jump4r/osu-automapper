@@ -31,6 +31,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.pauseButton = new System.Windows.Forms.Button();
             this.fileSystemWatcher1 = new System.IO.FileSystemWatcher();
+            this.openOSUFile = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -59,11 +60,22 @@
             this.fileSystemWatcher1.EnableRaisingEvents = true;
             this.fileSystemWatcher1.SynchronizingObject = this;
             // 
+            // openOSUFile
+            // 
+            this.openOSUFile.Location = new System.Drawing.Point(50, 73);
+            this.openOSUFile.Name = "openOSUFile";
+            this.openOSUFile.Size = new System.Drawing.Size(176, 23);
+            this.openOSUFile.TabIndex = 2;
+            this.openOSUFile.Text = "[DEBUG] Open .osu File";
+            this.openOSUFile.UseVisualStyleBackColor = true;
+            this.openOSUFile.Click += new System.EventHandler(this.openOSUFile_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 87);
+            this.ClientSize = new System.Drawing.Size(292, 115);
+            this.Controls.Add(this.openOSUFile);
             this.Controls.Add(this.pauseButton);
             this.Controls.Add(this.button1);
             this.Name = "Form1";
@@ -79,6 +91,7 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button pauseButton;
         private System.IO.FileSystemWatcher fileSystemWatcher1;
+        private System.Windows.Forms.Button openOSUFile;
     }
 }
 
