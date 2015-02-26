@@ -84,6 +84,8 @@ namespace osu_automapper
 
                 string[] fileSplitText = fileRawText.Split(new String[] { Environment.NewLine }, StringSplitOptions.None);
                 Console.WriteLine(fileSplitText[4]);
+                Beatmap instance = new Beatmap(fileSplitText);
+                instance.AnalyzeBeatmap();
             }
         }
     }
