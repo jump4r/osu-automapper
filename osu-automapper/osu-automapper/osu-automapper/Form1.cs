@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -87,6 +88,11 @@ namespace osu_automapper
                 Beatmap instance = new Beatmap(fileSplitText);
                 instance.AnalyzeBeatmap();
             }
+            //Start Writing the Map
+            StreamWriter osu_file = new StreamWriter(open.FileName, true);
+            HitCircle hit1 = new HitCircle(1,2,3,4,5);
+            osu_file.WriteLine(hit1.ToString());
+            osu_file.Close();
         }
     }
 }
