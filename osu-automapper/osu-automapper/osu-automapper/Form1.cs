@@ -30,7 +30,9 @@ namespace osu_automapper
 
             DisposeWave();
 
+            Console.WriteLine("FileName is: " + open.FileName);
             NAudio.Wave.WaveStream pcm = NAudio.Wave.WaveFormatConversionStream.CreatePcmStream(new NAudio.Wave.Mp3FileReader(open.FileName));
+            
             stream = new NAudio.Wave.BlockAlignReductionStream(pcm);
             output = new NAudio.Wave.DirectSoundOut();
             output.Init(stream);
@@ -79,20 +81,33 @@ namespace osu_automapper
 
             Console.WriteLine("Opened .osu File");
             // If path is good, lets get the file contents.
+            Beatmap instance;
             if (open.CheckPathExists) {
                 string fileRawText = System.IO.File.ReadAllText(open.FileName);
                 Console.WriteLine(open.FileName);
 
                 string[] fileSplitText = fileRawText.Split(new String[] { Environment.NewLine }, StringSplitOptions.None);
                 Console.WriteLine(fileSplitText[4]);
-                Beatmap instance = new Beatmap(fileSplitText);
+                instance = new Beatmap(fileSplitText, open.FileName);
                 instance.AnalyzeBeatmap();
+
+                StreamWriter osu_file = new StreamWriter(open.FileName, true);
+                int numCircles = 0;
+                // Basic Beatmap Creation
+                for (float i = (float)instance.offset; i < instance.songLength; i += instance.mpb)
+                {
+                    string hitCircleString = instance.ReturnHitCircle(256, 192, (int)i, 1, 0);
+                    osu_file.WriteLine(hitCircleString);
+                    numCircles++;
+                }
+                Console.WriteLine("Number of circles " + numCircles);
+                osu_file.Close();
             }
             //Start Writing the Map
-            StreamWriter osu_file = new StreamWriter(open.FileName, true);
+           /* StreamWriter osu_file = new StreamWriter(open.FileName, true);
             HitCircle hit1 = new HitCircle(1,2,3,4,5);
             osu_file.WriteLine(hit1.ToString());
-            osu_file.Close();
+            osu_file.Close();*/
         }
     }
 }
