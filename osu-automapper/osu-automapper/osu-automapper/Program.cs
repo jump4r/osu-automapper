@@ -72,7 +72,11 @@ namespace osu_automapper
             string[] path = filePath.Split('\\');
 
             // For Debug/Testing purposes. Repleace with general case
-            path[path.Length - 1] = "Shotgun Senorita (Zardonic Remix).mp3";
+            string[] temp = text[lineIndex].Split(':');
+            string mp3FileName = temp[1].Trim();
+
+            path[path.Length - 1] = mp3FileName;
+            Console.WriteLine(path[path.Length - 1]);
             string rtn = "";
             for (int i = 0; i < path.Length; i++)
             {

@@ -94,9 +94,12 @@ namespace osu_automapper
                 StreamWriter osu_file = new StreamWriter(open.FileName, true);
                 int numCircles = 0;
                 // Basic Beatmap Creation
+                Random rnd = new Random(); // For random x and y
                 for (float i = (float)instance.offset; i < instance.songLength; i += instance.mpb)
                 {
-                    string hitCircleString = instance.ReturnHitCircle(256, 192, (int)i, 1, 0);
+                    int x = (int)rnd.Next(10, 500);
+                    int y = (int)rnd.Next(10, 370);
+                    string hitCircleString = instance.ReturnHitCircle(x, y, (int)i, 1, 0);
                     osu_file.WriteLine(hitCircleString);
                     numCircles++;
                 }
