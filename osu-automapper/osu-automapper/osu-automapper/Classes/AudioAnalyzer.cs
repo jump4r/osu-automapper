@@ -15,7 +15,7 @@ namespace osu_automapper
         {
             waveViewer.SamplesPerPixel = 450;
             waveViewer.WaveStream = new NAudio.Wave.Mp3FileReader(filename);   
-         
+            
             //TODO: (1) Retrieve data from the wave viewer.
             //      (2) How do we know at what ms the data will play?
         }

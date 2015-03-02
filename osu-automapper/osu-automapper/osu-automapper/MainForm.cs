@@ -107,54 +107,16 @@ namespace osu_automapper
             open.Filter = "OSU file (*.osu)|*.osu;";
             if (open.ShowDialog() != DialogResult.OK) return;
 
-            Console.WriteLine("Opened .osu File");
-            // If path is good, lets get the file contents.
-            Beatmap instance;
-            if (open.CheckPathExists) {
-                string fileRawText = System.IO.File.ReadAllText(open.FileName);
-                Console.WriteLine(open.FileName);
-
-                string[] fileSplitText = fileRawText.Split(new String[] { Environment.NewLine }, StringSplitOptions.None);
-                Console.WriteLine(fileSplitText[4]);
-                instance = new Beatmap(fileSplitText, open.FileName);
-                instance.AnalyzeBeatmap();
-
-                StreamWriter osu_file = new StreamWriter(open.FileName, true);
-                int numCircles = 0;
-                // Basic Beatmap Creation
-                Random rnd = new Random(); // For random x and y
-                for (float i = (float)instance.offset; i < instance.songLength; i += instance.mpb)
-                {
-                    int x = (int)rnd.Next(10, 500);
-                    int y = (int)rnd.Next(10, 370);
-                    string hitCircleString = instance.ReturnHitCircle(x, y, (int)i, 1, 0);
-                    osu_file.WriteLine(hitCircleString);
-                    numCircles++;
-                }
-                Console.WriteLine("Number of circles " + numCircles);
-                osu_file.Close();
-            }
-            //Start Writing the Map
-           /* StreamWriter osu_file = new StreamWriter(open.FileName, true);
-            HitCircle hit1 = new HitCircle(1,2,3,4,5);
-            osu_file.WriteLine(hit1.ToString());
-            osu_file.Close();*/
-        }
-
-        private void openWaveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog open = new OpenFileDialog();
-            open.Filter = "Wave File (*.mp3)|*.mp3;";
-            if (open.ShowDialog() != DialogResult.OK) 
+            // If path is good, lets get the file contents.     
+            if (!open.CheckPathExists)
+            {
+                Console.WriteLine("Error: .CheckPathExists == false");
                 return;
+            }                      
 
-            //chart1.Series.Add("wave");
-            //chart1.Series["wave"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            //chart1.Series["wave"].ChartArea = "ChartArea1";
-            //NAudio.Wave.WaveChannel32 wave = new NAudio.Wave.WaveChannel32(new NAudio.Wave.Mp3FileReader(open.FileName));
-            //BeginRead(wave);
+            Beatmap instance = new Beatmap(open.FileName);
+            instance.CreateRandomBeatmap();
         }
-
 
         private void waveViewer1_MouseDown(object sender, MouseEventArgs e)
         {
@@ -186,25 +148,5 @@ namespace osu_automapper
         {
             return value < min ? min : (value > max ? max : value);
         }
-
-        //This is NOT for nAudio, but for the built in Windows.Forms.DataVisulization.xxx
-        //But it may be usful?
-        /*private void BeginRead(NAudio.Wave.WaveChannel32 wave)
-        {
-            byte[] buffer = new byte[16384];
-            int read = 0;
-
-            while (wave.Position < wave.Length)
-            {
-                Console.WriteLine(wave.Position);
-                read = wave.Read(buffer, 0, 16384);
-
-                for (int i = 0; i < read / 4; i++)
-                {
-                    chart1.Series["wave"].Points.Add(BitConverter.ToSingle(buffer, i * 4));
-                }
-            }
-        }*/
-
     }
 }
