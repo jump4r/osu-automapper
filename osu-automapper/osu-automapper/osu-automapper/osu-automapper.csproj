@@ -54,6 +54,8 @@
     <Compile Include="Classes\AudioAnalyzer.cs" />
     <Compile Include="Classes\Beatmap.cs" />
     <Compile Include="Classes\HitCircle.cs" />
+    <Compile Include="Classes\HitSlider.cs" />
+    <Compile Include="Classes\HitSpinner.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
