@@ -158,8 +158,8 @@ namespace osu_automapper
                 if (currentBeat % beatsPerMeasure == 0)
                 {
                     // Generate a random slider.
-                    char sliderType = sliderTypes[rnd.Next(0, 2)];
-                    string hitSliderString = ReturnHitSlider(x, y, (int)timestamp, 2, 0, 'B' , 1, sliderVelocity, 2);
+                    char sliderType = sliderTypes[rnd.Next(0, 3)];
+                    string hitSliderString = ReturnHitSlider(x, y, (int)timestamp, 2, 0, sliderType , 1, sliderVelocity, rnd.Next(2,4));
                     osu_file.WriteLine(hitSliderString);
                     numCircles++;
                     timestamp += AddTime("half");

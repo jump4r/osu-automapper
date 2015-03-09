@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace osu_automapper
 {
-    class HitCircle
+    class HitCircle : HitObject
     {
         public Point prevPoint { get; set; }
         private int[] direction = { 0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330 };
@@ -15,12 +15,7 @@ namespace osu_automapper
         private Random rnd;
 
         //properties
-        public int x { get; set; }
-        public int y { get; set; }
-        public int time { get; set; }
-        public int type { get; set; }
-        public int hitsound { get; set; }
-
+       
         private int oldX;
         private int oldY;
 
@@ -60,9 +55,9 @@ namespace osu_automapper
                 angle = rnd.Next(0, direction.Length);
                 x = prevPoint.X + (int)(maxDistance * Math.Cos(direction[angle]));
                 y = prevPoint.Y + (int)(maxDistance * Math.Sin(direction[angle]));
-               
+              
             }
-            Console.WriteLine("Distance Between Notes is " + GetDistanceBetweenHitObjects());
+            // Console.WriteLine("Distance Between Notes is " + GetDistanceBetweenHitObjects());
 
         }
 
