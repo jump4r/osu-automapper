@@ -24,16 +24,20 @@ namespace osu_automapper
 
         public int length { get; set; }
         public float sliderVelocity { get; set; }
+        public int numCurves { get; set; }
 
         // Private vars, used in construction of the slider for printing
         private int[] sliderAngles = { 0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330 };
 
-        Random rnd = new Random();
+        private Random rnd;
 
         // Slider Construtor
         public HitSlider() { }
-        public HitSlider(int x, int y, int time, int type, int hitsound, char sliderType, int repeat, float sliderVelocity, int numCurves, int length)
+        public HitSlider(int x, int y, int time, int type, int hitsound, char sliderType, int repeat, float sliderVelocity, int numCurves, int length, Random rnd)
         {
+            // Because c# random fucking sucks
+            this.rnd = rnd;
+
             this.x = x;
             this.y = y;
             this.time = time;
@@ -45,6 +49,7 @@ namespace osu_automapper
 
             this.sliderVelocity = 1.5f;
             this.length = length;
+            this.numCurves = numCurves;
 
             // Construct the Slider
             ConstructSlider();
@@ -60,6 +65,7 @@ namespace osu_automapper
                 case 'P': // P-spline
                     break;
                 case 'B': // Bezier Spline
+                    AddBezierSlider();
                     break;
             }
         }
@@ -75,11 +81,29 @@ namespace osu_automapper
             curvePoints.Add(endPoint);
         }
 
+        private void AddBezierSlider()
+        {
+            for (int i = 0; i < numCurves; i++)
+            {
+                curvePoints.Add(AddBezierSliderPoint());
+            }
+        }
+
+        private Point AddBezierSliderPoint()
+        {
+            int angle = rnd.Next(0, sliderAngles.Length);
+            Point p2Add = new Point();
+
+            // Add new point
+            p2Add.X = x + (int)((length / numCurves) * Math.Cos(sliderAngles[angle]));
+            p2Add.Y = y + (int)((length / numCurves) * Math.Sin(sliderAngles[angle]));
+            return p2Add;
+        }
+
 
 
         public override string ToString()
         {
-            Console.WriteLine(type);
             string rtn = x + "," + y + "," + time + "," + type + "," + hitsound + "," + sliderType + "|";
             for (int i = 0; i < curvePoints.Count(); i++)
             {

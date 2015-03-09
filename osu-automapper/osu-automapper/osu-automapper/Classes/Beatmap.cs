@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace osu_automapper
 {
@@ -26,6 +27,11 @@ namespace osu_automapper
         private float sliderVelocity = 1.5f;
         private int sliderLengthPerBeat;
 
+        // Difficulty
+        private int maxNoteDistance = 100;
+
+        public Random rnd;
+
         private Dictionary<string, float> notes = new Dictionary<string, float>();
 
         public Beatmap(string fileName)
@@ -33,6 +39,10 @@ namespace osu_automapper
             // TODO: Complete member initialization
             
             this.fileName = fileName;
+
+            // Random is so bad and I'm actually furious
+            int seed = (int)DateTime.Now.Ticks;
+            rnd = new Random(seed);
 
             Console.WriteLine("Loading .osu file..." + fileName);
             string fileRawText = System.IO.File.ReadAllText(fileName);
@@ -60,11 +70,15 @@ namespace osu_automapper
             throw new NotImplementedException("TODO: Auto Generate a beatmap file from scratch. (headers, settings, etc.)");
         }
 
+        /// <summary>
+        /// Parse .osu Beatmap file.
+        /// </summary>
         public void LoadBeatmapFromFile()
         {
             for (int i = 0; i < text.Length; i++)
             {
                 // Get the init timing points and the milleseconds per beat.
+                
                 if (text[i] == "[TimingPoints]")
                 {
                     string[] initTimingPonits = text[i + 1].Split(',');
@@ -79,6 +93,13 @@ namespace osu_automapper
                     TimeSpan ts = pcm.TotalTime;
                     songLength = ((ts.Minutes * 60) + ts.Seconds) * 1000 + ts.Milliseconds;
                     Console.WriteLine("Total Song Length is: " + songLength);
+                }
+
+                else if (text[i] == "[Difficulty]")
+                {
+                    string[] sliderVelText = text[i + 5].Split(':');
+                    sliderVelocity = float.Parse(sliderVelText[1]);
+                    Console.WriteLine("Slider Velocity is: " + sliderVelocity);
                 }
             }
         }
@@ -120,9 +141,13 @@ namespace osu_automapper
 
             StreamWriter osu_file = new StreamWriter(this.fileName, true);
             int numCircles = 0;
+            char[] sliderTypes = {'L', 'B', 'P'};
 
             // Basic Beatmap Creation
-            Random rnd = new Random(); // For random x and y
+            Point prevPoint = new Point();
+            prevPoint.X = -1; 
+            prevPoint.Y = -1;
+
             float timestamp = (float)offset;
             // for (float timestamp = (float)offset; timestamp < songLength; timestamp += mpb)
             while (timestamp < songLength)
@@ -133,20 +158,25 @@ namespace osu_automapper
                 if (currentBeat % beatsPerMeasure == 0)
                 {
                     // Generate a random slider.
-                    string hitSliderString = ReturnHitSlider(x, y, (int)timestamp, 2, 0, 'L', 1, 1.5f, 0);
+                    char sliderType = sliderTypes[rnd.Next(0, 2)];
+                    string hitSliderString = ReturnHitSlider(x, y, (int)timestamp, 2, 0, 'B' , 1, sliderVelocity, 2);
                     osu_file.WriteLine(hitSliderString);
                     numCircles++;
                     timestamp += AddTime("half");
                     currentBeat += (int)notes["half"];
+
                 }
 
                 else
                 {
-                    string hitCircleString = ReturnHitCircle(x, y, (int)timestamp, 1, 0);
+                    string hitCircleString = ReturnHitCircle(x, y, (int)timestamp, 1, 0, prevPoint);
                     osu_file.WriteLine(hitCircleString);
                     numCircles++;
                     timestamp += AddTime("quarter");
                     currentBeat += (int)notes["quarter"];
+
+                    prevPoint.X = x;
+                    prevPoint.Y = y;
                 }
             }
 
@@ -160,9 +190,9 @@ namespace osu_automapper
         }
 
         // Returns the string of a Hit Circle to be added to the beatmap.
-        public string ReturnHitCircle(int x, int y, int time, int type, int hitSound)
+        public string ReturnHitCircle(int x, int y, int time, int type, int hitSound, Point prevPoint)
         {
-            HitCircle hc = new HitCircle(x, y, time, type, hitSound);
+            HitCircle hc = new HitCircle(x, y, time, type, hitSound, prevPoint, maxNoteDistance, rnd);
             return hc.ToString();
         }
 
@@ -170,7 +200,7 @@ namespace osu_automapper
         {
             // Length will determine how long a slider will go on for
             int len = (int)(sliderVelocity * 100);
-            HitSlider hs = new HitSlider(x, y, time, type, hitsound, 'L', repeat, 1.5f, numCurves, len);
+            HitSlider hs = new HitSlider(x, y, time, type, hitsound, sliderType, repeat, sliderVelocity, numCurves, len, rnd);
             return hs.ToString();
         }
     }
