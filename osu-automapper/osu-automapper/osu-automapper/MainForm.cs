@@ -74,8 +74,6 @@ namespace osu_automapper
             output.Play();
 
             pauseButton.Enabled = true;
-
-
         }
 
         private void pauseButton_Click(object sender, EventArgs e)
@@ -119,10 +117,15 @@ namespace osu_automapper
             }
 
             this.beatmap = new Beatmap(open.FileName);
-            this.beatmap.CreateRandomBeatmap();
         }
 
+        private void createRandomButton_Click(object sender, EventArgs e)
+        {
+            if (beatmap == null)
+                return;
 
+            beatmap.CreateRandomBeatmap();
+        }
 
         private void createButton_Click(object sender, EventArgs e)
         {
@@ -170,5 +173,7 @@ namespace osu_automapper
         {
             return value < min ? min : (value > max ? max : value);
         }
+
+
     }
 }

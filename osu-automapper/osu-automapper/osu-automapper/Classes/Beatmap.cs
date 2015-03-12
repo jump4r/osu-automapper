@@ -8,6 +8,12 @@ using System.Drawing;
 
 namespace osu_automapper
 {
+    public enum SliderTypes
+    {
+        L,
+        B,
+        P
+    }
     public enum MusicNotes
     {
         Whole,
@@ -40,8 +46,10 @@ namespace osu_automapper
         private int maxNoteDistance = 100;
 
         public Random rnd;
+        public Random rnd2;
 
         private Dictionary<string, float> notes = new Dictionary<string, float>();
+        private char[] sliderTypes = new char[] { 'L', 'B', 'P' };
 
         public Beatmap(string fileName)
         {
@@ -52,6 +60,7 @@ namespace osu_automapper
             // Random is so bad and I'm actually furious
             int seed = (int)DateTime.Now.Ticks;
             rnd = new Random(seed);
+            rnd2 = new Random((int)(rnd.Next() * (float)seed));
 
             Console.WriteLine("Loading .osu file..." + fileName);
             string fileRawText = System.IO.File.ReadAllText(fileName);
@@ -150,7 +159,6 @@ namespace osu_automapper
 
             StreamWriter osu_file = new StreamWriter(this.fileName, true);
             int numCircles = 0;
-            char[] sliderTypes = {'L', 'B', 'P'};
 
             // Basic Beatmap Creation
             Point prevPoint = new Point();
@@ -205,19 +213,54 @@ namespace osu_automapper
 
             StreamWriter osu_file = new StreamWriter(this.fileName, true);
             int numCircles = 0;
-            char[] sliderTypes = { 'L', 'B', 'P' };
 
             // Basic Beatmap Creation
             Point prevPoint = new Point();
-            prevPoint.X = -1;
-            prevPoint.Y = -1;
+            prevPoint.X = rnd.Next(10, 500);
+            prevPoint.Y = rnd.Next(10, 370);
 
             float timestamp = (float)offset;
             // for (float timestamp = (float)offset; timestamp < songLength; timestamp += mpb)
             while (timestamp < songLength)
             {
-                int x = (int)rnd.Next(10, 500);
-                int y = (int)rnd.Next(10, 370);
+                int x = 0;// (int)rnd.Next(10, 500);
+                int y = 0;// (int)rnd.Next(10, 370);
+
+                //Gets a point on a circle whose center lies at the previous point.
+                while (x < 10 && x > 500 && y < 10 && y > 370)
+                {
+                    float radius = rnd.Next(30, maxNoteDistance);//<---- This could be a function of bpm, i.e. time-distance relation between beats
+                    float dirx = (float)rnd.NextDouble();
+                    float diry = (float)rnd2.NextDouble();
+                    x = prevPoint.X + (int)(dirx * radius);
+                    y = prevPoint.Y + (int)(diry * radius);
+                }
+
+                //@ANDREW: Look at AudioAnalyzer.CreatePeakDataAt(), and AudioAnalyzer.CreatePeakData().
+                //         If you want to use music notes as you do here, use .CreatePeakDataAt().
+                //         If you want to collect all the peak data at once,
+                //         use .CreatePeakData() <--- but don't actually use this yet, it won't work right.
+                // 
+                //TODO: Now we need to consult the analyzer as we go.
+                //      Since the time interval changes (halfnote vs quarter, etc), we have to 
+                //      update the analyzer at the same interval as "timestamp"
+
+                //@Andrew: It can be used like this. 
+                //         Important Note: PeakData.value is in DECIBELS.
+                //                         So threshold should also relate to DECIBELS.
+                //       
+
+                //EXAMPLE (NOT TESTED):
+                double threshold = Double.Parse("1.0E-40");
+                var peakData = analyzer.CreatePeakDataAt((int)timestamp, 450);
+                Console.WriteLine(peakData.ToString());
+                if (peakData.value < threshold)
+                {
+                    //Continue without adding a beat here if no sound was detected.
+                    timestamp += AddTime("half");
+                    continue;
+                }
+                //END EXAMPLE
 
                 if (currentBeat % beatsPerMeasure == 0)
                 {
@@ -228,9 +271,7 @@ namespace osu_automapper
                     numCircles++;
                     timestamp += AddTime("half");
                     currentBeat += (int)notes["half"];
-
                 }
-
                 else
                 {
                     string hitCircleString = ReturnHitCircle(x, y, (int)timestamp, 1, 0, prevPoint);

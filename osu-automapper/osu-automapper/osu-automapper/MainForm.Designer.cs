@@ -35,6 +35,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.waveViewer1 = new NAudio.Gui.WaveViewer();
             this.createButton = new System.Windows.Forms.Button();
+            this.createRandomButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -97,6 +98,7 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.createRandomButton);
             this.splitContainer1.Panel2.Controls.Add(this.createButton);
             this.splitContainer1.Panel2.Controls.Add(this.openOSUFile);
             this.splitContainer1.Panel2.Controls.Add(this.loadMP3Button);
@@ -123,14 +125,26 @@
             // createButton
             // 
             this.createButton.BackColor = System.Drawing.Color.White;
-            this.createButton.Location = new System.Drawing.Point(337, 5);
+            this.createButton.Location = new System.Drawing.Point(337, 52);
             this.createButton.Margin = new System.Windows.Forms.Padding(5);
             this.createButton.Name = "createButton";
             this.createButton.Size = new System.Drawing.Size(313, 37);
             this.createButton.TabIndex = 3;
-            this.createButton.Text = "Create Random Beatmap";
+            this.createButton.Text = "Create Audio Beatmap";
             this.createButton.UseVisualStyleBackColor = false;
             this.createButton.Click += new System.EventHandler(this.createButton_Click);
+            // 
+            // createRandomButton
+            // 
+            this.createRandomButton.BackColor = System.Drawing.Color.White;
+            this.createRandomButton.Location = new System.Drawing.Point(337, 8);
+            this.createRandomButton.Margin = new System.Windows.Forms.Padding(5);
+            this.createRandomButton.Name = "createRandomButton";
+            this.createRandomButton.Size = new System.Drawing.Size(313, 34);
+            this.createRandomButton.TabIndex = 4;
+            this.createRandomButton.Text = "Create Random Beatmap";
+            this.createRandomButton.UseVisualStyleBackColor = false;
+            this.createRandomButton.Click += new System.EventHandler(this.createRandomButton_Click);
             // 
             // MainForm
             // 
@@ -160,6 +174,7 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private NAudio.Gui.WaveViewer waveViewer1;
         private System.Windows.Forms.Button createButton;
+        private System.Windows.Forms.Button createRandomButton;
 
     }
 }
