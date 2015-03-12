@@ -17,6 +17,10 @@ namespace osu_automapper
         bool draggingWaveForm = false;
         Point prevMousePosition;
 
+        Beatmap beatmap;
+        AudioAnalyzer analyzer;
+        NAudio.Wave.WaveStream pcm;
+
         public MainForm()
         {
             InitializeComponent();
@@ -27,7 +31,7 @@ namespace osu_automapper
         }
 
         public void LoadColors(Button button, Color fromColor, Color toColor)
-        {            
+        {
             Bitmap bmp = new Bitmap(button.Width, button.Height);
 
             using (Graphics g = Graphics.FromImage(bmp))
@@ -44,7 +48,7 @@ namespace osu_automapper
             }
 
             button.ForeColor = Color.Black;
-            button.BackColor = Color.FromArgb(0, 0, 0, 0);             
+            button.BackColor = Color.FromArgb(0, 0, 0, 0);
             button.BackgroundImage = bmp;
         }
 
@@ -56,22 +60,22 @@ namespace osu_automapper
         {
             OpenFileDialog open = new OpenFileDialog();
             open.Filter = "MP3 file (*.mp3)|*.mp3;";
-            if (open.ShowDialog() != DialogResult.OK) 
+            if (open.ShowDialog() != DialogResult.OK)
                 return;
 
             DisposeWave();
 
-            AudioAnalyzer analyzer = new AudioAnalyzer(open.FileName, waveViewer1);
-
             Console.WriteLine("FileName is: " + open.FileName);
-            NAudio.Wave.WaveStream pcm = NAudio.Wave.WaveFormatConversionStream.CreatePcmStream(new NAudio.Wave.Mp3FileReader(open.FileName));
-            
+            pcm = NAudio.Wave.WaveFormatConversionStream.CreatePcmStream(new NAudio.Wave.Mp3FileReader(open.FileName));
+
             stream = new NAudio.Wave.BlockAlignReductionStream(pcm);
             output = new NAudio.Wave.DirectSoundOut();
             output.Init(stream);
             output.Play();
 
-            pauseButton.Enabled = true;  
+            pauseButton.Enabled = true;
+
+
         }
 
         private void pauseButton_Click(object sender, EventArgs e)
@@ -112,10 +116,31 @@ namespace osu_automapper
             {
                 Console.WriteLine("Error: .CheckPathExists == false");
                 return;
-            }                      
+            }
 
-            Beatmap instance = new Beatmap(open.FileName);
-            instance.CreateRandomBeatmap();
+            this.beatmap = new Beatmap(open.FileName);
+            this.beatmap.CreateRandomBeatmap();
+        }
+
+
+
+        private void createButton_Click(object sender, EventArgs e)
+        {
+            if (pcm == null || beatmap == null)
+            {
+                if (pcm == null)
+                {
+                    Console.WriteLine("Error:No MP3 selected.");
+                }
+                if (beatmap == null)
+                {
+                    Console.WriteLine("Error:No beatmap selected.");
+                }
+                return;
+            }
+
+            analyzer = new AudioAnalyzer(pcm, beatmap);
+            beatmap.CreateRandomBeatmap(analyzer);
         }
 
         private void waveViewer1_MouseDown(object sender, MouseEventArgs e)
@@ -123,7 +148,6 @@ namespace osu_automapper
             prevMousePosition = MousePosition;
             draggingWaveForm = true;
         }
-
         private void waveViewer1_MouseMove(object sender, MouseEventArgs e)
         {
             if (!draggingWaveForm)
@@ -138,12 +162,10 @@ namespace osu_automapper
 
             waveViewer1.Width = this.Location.X + this.Width - wvp.X;
         }
-
         private void waveViewer1_MouseUp(object sender, MouseEventArgs e)
         {
             draggingWaveForm = false;
         }
-
         int Clamp(int value, int min, int max)
         {
             return value < min ? min : (value > max ? max : value);

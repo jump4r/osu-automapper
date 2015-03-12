@@ -34,6 +34,7 @@
             this.openOSUFile = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.waveViewer1 = new NAudio.Gui.WaveViewer();
+            this.createButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -96,6 +97,7 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.createButton);
             this.splitContainer1.Panel2.Controls.Add(this.openOSUFile);
             this.splitContainer1.Panel2.Controls.Add(this.loadMP3Button);
             this.splitContainer1.Panel2.Controls.Add(this.pauseButton);
@@ -117,6 +119,18 @@
             this.waveViewer1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.waveViewer1_MouseDown);
             this.waveViewer1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.waveViewer1_MouseMove);
             this.waveViewer1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.waveViewer1_MouseUp);
+            // 
+            // createButton
+            // 
+            this.createButton.BackColor = System.Drawing.Color.White;
+            this.createButton.Location = new System.Drawing.Point(337, 5);
+            this.createButton.Margin = new System.Windows.Forms.Padding(5);
+            this.createButton.Name = "createButton";
+            this.createButton.Size = new System.Drawing.Size(313, 37);
+            this.createButton.TabIndex = 3;
+            this.createButton.Text = "Create Random Beatmap";
+            this.createButton.UseVisualStyleBackColor = false;
+            this.createButton.Click += new System.EventHandler(this.createButton_Click);
             // 
             // MainForm
             // 
@@ -145,6 +159,7 @@
         private System.Windows.Forms.Button openOSUFile;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private NAudio.Gui.WaveViewer waveViewer1;
+        private System.Windows.Forms.Button createButton;
 
     }
 }

@@ -8,6 +8,15 @@ using System.Drawing;
 
 namespace osu_automapper
 {
+    public enum MusicNotes
+    {
+        Whole,
+        Half,
+        Quarter,
+        Eighth,
+        Sixteenth
+    }
+
     class Beatmap
     {
         // Beat map text
@@ -160,6 +169,61 @@ namespace osu_automapper
                     // Generate a random slider.
                     char sliderType = sliderTypes[rnd.Next(0, 3)];
                     string hitSliderString = ReturnHitSlider(x, y, (int)timestamp, 2, 0, sliderType , 1, sliderVelocity, rnd.Next(2,4));
+                    osu_file.WriteLine(hitSliderString);
+                    numCircles++;
+                    timestamp += AddTime("half");
+                    currentBeat += (int)notes["half"];
+
+                }
+
+                else
+                {
+                    string hitCircleString = ReturnHitCircle(x, y, (int)timestamp, 1, 0, prevPoint);
+                    osu_file.WriteLine(hitCircleString);
+                    numCircles++;
+                    timestamp += AddTime("quarter");
+                    currentBeat += (int)notes["quarter"];
+
+                    prevPoint.X = x;
+                    prevPoint.Y = y;
+                }
+            }
+
+            Console.WriteLine("Number of circles " + numCircles);
+            osu_file.Close();
+        }
+
+        public void CreateRandomBeatmap(AudioAnalyzer analyzer)
+        {
+            if (!File.Exists(this.fileName))
+            {
+                Console.WriteLine("Error: File not found.(" + this.fileName + ")");
+                return;
+            }
+
+            Console.WriteLine("Generating Random Beatmap. Appending to file..." + this.fileName);
+
+            StreamWriter osu_file = new StreamWriter(this.fileName, true);
+            int numCircles = 0;
+            char[] sliderTypes = { 'L', 'B', 'P' };
+
+            // Basic Beatmap Creation
+            Point prevPoint = new Point();
+            prevPoint.X = -1;
+            prevPoint.Y = -1;
+
+            float timestamp = (float)offset;
+            // for (float timestamp = (float)offset; timestamp < songLength; timestamp += mpb)
+            while (timestamp < songLength)
+            {
+                int x = (int)rnd.Next(10, 500);
+                int y = (int)rnd.Next(10, 370);
+
+                if (currentBeat % beatsPerMeasure == 0)
+                {
+                    // Generate a random slider.
+                    char sliderType = sliderTypes[rnd.Next(0, 3)];
+                    string hitSliderString = ReturnHitSlider(x, y, (int)timestamp, 2, 0, sliderType, 1, sliderVelocity, rnd.Next(2, 4));
                     osu_file.WriteLine(hitSliderString);
                     numCircles++;
                     timestamp += AddTime("half");
