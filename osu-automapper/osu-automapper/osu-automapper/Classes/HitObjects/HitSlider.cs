@@ -93,7 +93,7 @@ namespace osu_automapper
 
         private Point AddBezierSliderPoint(int angle)
         {
-            int angleOffset = rnd.Next(-3, 3);
+            int angleOffset = rnd.Next(-1, 1);
             int newAngle = ((angle + angleOffset) < 0) ? ((angle + angleOffset) + sliderAngles.Length) : (angle + angleOffset);
             Point p2Add = new Point();
             

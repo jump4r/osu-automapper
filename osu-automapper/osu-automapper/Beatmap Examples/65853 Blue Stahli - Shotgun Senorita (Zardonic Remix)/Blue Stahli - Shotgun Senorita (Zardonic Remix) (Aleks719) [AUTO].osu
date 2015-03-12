@@ -1,0 +1,125 @@
+osu file format v14
+
+[General]
+AudioFilename: Shotgun Senorita (Zardonic Remix).mp3
+AudioLeadIn: 0
+PreviewTime: 21968
+Countdown: 0
+SampleSet: None
+StackLeniency: 0.4
+Mode: 0
+LetterboxInBreaks: 0
+WidescreenStoryboard: 1
+
+[Editor]
+DistanceSpacing: 1.4
+BeatDivisor: 4
+GridSize: 4
+TimelineZoom: 1
+
+[Metadata]
+Title:Shotgun Senorita (Zardonic Remix)
+TitleUnicode:Shotgun Senorita (Zardonic Remix)
+Artist:Blue Stahli
+ArtistUnicode:Blue Stahli
+Creator:Aleks719
+Version:AUTO
+Source:
+Tags:niva nivalis electronic drum and bass dnb d'n'b Federico Augusto Agreda Alvarez minimal
+BeatmapID:0
+BeatmapSetID:65853
+
+[Difficulty]
+HPDrainRate:8
+CircleSize:4
+OverallDifficulty:7
+ApproachRate:9
+SliderMultiplier:1.8
+SliderTickRate:2
+
+[Events]
+//Background and Video events
+0,0,"Konachan.com - 144928 building cigarette gun necklace original sky smoking terabyte_(rook777) weapon.jpg",0,0
+//Break Periods
+//Storyboard Layer 0 (Background)
+//Storyboard Layer 1 (Fail)
+//Storyboard Layer 2 (Pass)
+//Storyboard Layer 3 (Foreground)
+Sprite,Foreground,Centre,"st1.png",320,240
+ L,21600,1
+  F,0,0,342,0,1
+  S,0,342,21942,0.8,1
+  R,0,342,22285,-0.2,0.05
+  F,0,21942,22285,1,0
+  S,0,21942,22285,1,0.1
+ M,0,21600,,560,80
+Sprite,Foreground,Centre,"st2.png",320,240
+ L,43885,1
+  F,0,0,342,0,1
+  S,0,342,21600,0.8,1
+  R,0,342,21942,-0.2,0.05
+  F,0,21600,21942,1,0
+  S,0,21600,21942,1,0.1
+ M,0,43542,,560,80
+Sprite,Foreground,Centre,"st3.png",320,240
+ L,65828,1
+  F,0,0,342,0,1
+  S,0,342,21600,0.8,1
+  R,0,342,21942,-0.2,0.05
+  F,0,21600,21942,1,0
+  S,0,21600,21942,1,0.1
+ M,0,65485,,560,80
+Sprite,Foreground,Centre,"st4.png",320,240
+ L,87771,1
+  F,0,0,342,0,1
+  S,0,342,21600,0.8,1
+  R,0,342,21942,-0.2,0.05
+  F,0,21600,21942,1,0
+  S,0,21600,21942,1,0.1
+ M,0,87428,,560,80
+Sprite,Foreground,Centre,"st5.png",320,240
+ L,109714,1
+  F,0,0,342,0,1
+  S,0,342,24686,0.8,1
+  R,0,342,25028,-0.2,0.05
+  F,0,24686,25028,1,0
+  S,0,24686,25028,1,0.1
+ M,0,109714,,560,80
+//Storyboard Sound Samples
+
+[TimingPoints]
+26,342.857142857143,4,1,0,50,1,0
+10311,-200,4,2,0,50,0,0
+19311,-125,4,1,0,30,0,0
+20854,-100,4,1,0,40,0,0
+21968,-100,4,1,0,50,0,1
+22140,-100,4,1,0,50,0,0
+27283,-200,4,1,0,50,0,0
+27797,-100,4,1,0,50,0,0
+32940,-100,4,1,0,60,0,0
+42540,-200,4,1,0,70,0,0
+42626,-200,4,1,0,45,0,0
+43226,-100,4,1,0,60,0,0
+43911,-100,4,1,0,60,0,1
+44083,-100,4,1,0,60,0,0
+65854,-100,4,1,0,60,0,1
+66026,-100,4,1,0,60,0,0
+87111,-100,4,1,0,80,0,0
+87797,-100,4,1,0,80,0,1
+87968,-100,4,1,0,60,0,0
+109311,-200,4,1,0,60,0,0
+109740,-100,4,1,0,60,0,1
+109911,-100,4,1,0,60,0,0
+131683,-100,4,1,0,80,0,1
+131854,-100,4,1,0,60,0,0
+134426,-100,4,1,0,30,0,0
+
+
+[Colours]
+Combo1 : 188,23,202
+Combo2 : 66,128,138
+Combo3 : 0,128,192
+Combo4 : 221,0,0
+Combo5 : 255,128,0
+
+[HitObjects]

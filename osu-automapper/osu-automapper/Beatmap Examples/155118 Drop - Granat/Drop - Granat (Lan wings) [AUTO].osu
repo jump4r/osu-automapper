@@ -1,0 +1,67 @@
+osu file format v14
+
+[General]
+AudioFilename: 7.VII. Granat.mp3
+AudioLeadIn: 2000
+PreviewTime: 281
+Countdown: 0
+SampleSet: Soft
+StackLeniency: 0.7
+Mode: 0
+LetterboxInBreaks: 0
+WidescreenStoryboard: 1
+
+[Editor]
+Bookmarks: 281,6249,14206,16196,22164,24153,32111,40068
+DistanceSpacing: 1
+BeatDivisor: 2
+GridSize: 4
+TimelineZoom: 2.699999
+
+[Metadata]
+Title:Granat
+TitleUnicode:Granat
+Artist:Drop
+ArtistUnicode:Drop
+Creator:Lan wings
+Version:AUTO
+Source:
+Tags:竜と炎の物語 清風明月 c85 seifuu meigetsu  ryuu to honou no monogatari Dragon and Flame spboxer3
+BeatmapID:0
+BeatmapSetID:-1
+
+[Difficulty]
+HPDrainRate:7
+CircleSize:4
+OverallDifficulty:8
+ApproachRate:9
+SliderMultiplier:1.79999990463257
+SliderTickRate:1
+
+[Events]
+//Background and Video events
+0,0,"bg.jpg",0,0
+//Break Periods
+//Storyboard Layer 0 (Background)
+//Storyboard Layer 1 (Fail)
+//Storyboard Layer 2 (Pass)
+//Storyboard Layer 3 (Foreground)
+//Storyboard Sound Samples
+
+[TimingPoints]
+281,331.5649867374,3,2,1,50,1,0
+40400,-100,3,2,1,30,0,0
+40731,-100,3,2,1,40,0,0
+41063,-100,3,2,1,30,0,0
+41395,-100,3,2,1,35,0,0
+41726,-100,3,2,1,30,0,0
+42058,-100,3,2,1,35,0,0
+
+
+[Colours]
+Combo1 : 255,128,192
+Combo2 : 128,255,128
+Combo3 : 0,255,255
+Combo4 : 255,255,128
+
+[HitObjects]
