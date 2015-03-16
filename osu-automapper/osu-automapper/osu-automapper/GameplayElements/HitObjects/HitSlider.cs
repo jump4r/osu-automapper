@@ -14,7 +14,7 @@ namespace osu_automapper
 		// public List<Point> curvePoints { get; set; }
 		private List<Vector2> curvePoints = new List<Vector2>();
 
-		public int SliderType { get; set; }
+		public SliderCurveType SliderType { get; set; }
 		public int Repeat { get; set; }
 		public int Length { get; set; }
 		public float Velocity { get; set; }
@@ -30,7 +30,7 @@ namespace osu_automapper
 			this.Time = time;
 
 			this.HitSound = (int)hitsound;
-			this.SliderType = (int)sliderType;
+			this.SliderType = sliderType;
 			this.HitType = (int)hitType;
 
 			this.Repeat = repeat;
@@ -45,7 +45,7 @@ namespace osu_automapper
 
 		private void ConstructSlider()
 		{
-			switch ((SliderCurveType)SliderType)
+			switch (SliderType)
 			{
 				case SliderCurveType.Bezier: // Bezier Spline
 					GenerateBezierSlider();
@@ -53,7 +53,7 @@ namespace osu_automapper
 				case SliderCurveType.Linear: // Linear Slider
 					GenerateLinearSlider();
 					break;
-				case SliderCurveType.Catmull: // P-spline
+				case SliderCurveType.PSpline: // P-spline
 					GenerateBezierSlider();
 					break;
 
@@ -63,8 +63,8 @@ namespace osu_automapper
 		private void GenerateLinearSlider()
 		{
 			float angle = validAngles[RandomHelper.Range(0, validAngles.Length)];
-			float x = (float)Math.Cos(angle) * Length;
-			float y = (float)Math.Sin(angle) * Length;
+			float x = Position.X + (float)Math.Cos(angle) * Length;
+			float y = Position.X + (float)Math.Sin(angle) * Length;
 			Vector2 endPoint = startPosition + new Vector2(x, y);
 
 			// Add the slider
@@ -100,8 +100,8 @@ namespace osu_automapper
 			var segmentLength = (float)Length / NumCurves;
 
 			float angle = validAngles[angleIndex];
-			float x = (float)Math.Cos(angle) * segmentLength;
-			float y = (float)Math.Sin(angle) * segmentLength;
+			float x = Position.X + (float)Math.Cos(angle) * segmentLength;
+			float y = Position.Y + (float)Math.Sin(angle) * segmentLength;
 
 			Position = new Vector2(x, y);
 
@@ -115,7 +115,7 @@ namespace osu_automapper
 			var builder = new StringBuilder();
 
 			builder.AppendFormat("{0},{1},{2},{3},{4},{5}|", MathHelper.RoundToInt(startPosition.X), MathHelper.RoundToInt(startPosition.Y),
-				Time, ((int)HitType), ((int)HitSound), ((int)SliderType));
+				Time, ((int)HitType), ((int)HitSound), SliderType.GetSliderChar());
 
 			int i;
 			for (i = 0; i < curvePoints.Count - 1; i++)

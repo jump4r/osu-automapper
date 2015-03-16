@@ -10,6 +10,24 @@ namespace osu_automapper
 	{
 		Linear = 0,
 		Bezier = 1,
-		Catmull = 2,
+		PSpline = 2,
+	}
+
+	public static class SliderCurveTypeExtensions
+	{
+		public static char GetSliderChar(this SliderCurveType curveType)
+		{
+			switch (curveType)
+			{
+				case SliderCurveType.Linear:
+					return 'L';
+				case SliderCurveType.Bezier:
+					return 'B';
+				case SliderCurveType.PSpline:
+					return 'P';
+				default:
+					return 'X';
+			}
+		}
 	}
 }

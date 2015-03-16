@@ -29,5 +29,10 @@ namespace osu_automapper
 		{
 			return rand.Next(min, max);
 		}
+
+		public static Vector2 OnCircle(Vector2 center, float radius = 1f)
+		{
+			return new Vector2(RandomHelper.Range(-1f, 1f), RandomHelper.Range(-1, 1f)).Normalized * radius;
+		}
 	}
 }

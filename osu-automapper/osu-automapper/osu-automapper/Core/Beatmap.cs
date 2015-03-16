@@ -206,18 +206,15 @@ namespace osu_automapper
 				// for (float timestamp = (float)offset; timestamp < songLength; timestamp += mpb)
 				while (timestamp < songLength)
 				{
-					int x = 0;
-					int y = 0;
+					Vector2 pos = Vector2.Zero;
 
 					//Gets a point on a circle whose center lies at the previous point.
-					while (x < 10 && x > 500 && y < 10 && y > 370)
+					do
 					{
 						float radius = RandomHelper.Range(30f, maxNoteDistance);//<---- This could be a function of bpm, i.e. time-distance relation between beats
-						float dirx = RandomHelper.NextFloat * radius;
-						float diry = RandomHelper.NextFloat * radius;
 
-						prevPoint += new Vector2(dirx, diry);
-					}
+						pos = prevPoint + RandomHelper.OnCircle(prevPoint, radius);
+					} while (!PlayField.Contains(pos));
 
 					//@ANDREW: Look at AudioAnalyzer.CreatePeakDataAt(), and AudioAnalyzer.CreatePeakData().
 					//         If you want to use music notes as you do here, use .CreatePeakDataAt().
@@ -250,7 +247,7 @@ namespace osu_automapper
 					{
 						// Generate a random slider.
 						var sliderType = EnumHelper.GetRandom<SliderCurveType>(); //sliderTypes[rnd.Next(0, 3)];
-						string sliderData = GetSliderData(new Vector2(x, y), (int)timestamp, HitObjectType.Slider,
+						string sliderData = GetSliderData(pos, (int)timestamp, HitObjectType.Slider,
 												HitObjectSoundType.None, sliderType, 1, sliderVelocity, RandomHelper.Range(minSliderCurves, maxSliderCurves + 1));
 
 						osuFile.WriteLine(sliderData);
@@ -262,7 +259,7 @@ namespace osu_automapper
 					}
 					else
 					{
-						string circleData = GetHitCircleData(new Vector2(x, y), (int)timestamp, HitObjectType.Normal,
+						string circleData = GetHitCircleData(pos, (int)timestamp, HitObjectType.Normal,
 												HitObjectSoundType.None, prevPoint);
 
 						osuFile.WriteLine(circleData);
@@ -272,7 +269,7 @@ namespace osu_automapper
 						timestamp += AddTime(NoteDuration.Quarter);
 						currentBeat += (int)NoteDuration.Quarter;
 
-						prevPoint = new Vector2(x, y);
+						prevPoint = pos;
 					}
 				}
 

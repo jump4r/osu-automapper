@@ -39,7 +39,7 @@ namespace osu_automapper
 			float x = MaxDistance * (float)Math.Cos(validAngles[angle]);
 			float y = MaxDistance * (float)Math.Sin(validAngles[angle]);
 
-			Position += new Vector2(x, y);
+			Position = PrevPos + new Vector2(x, y);
 			var playField = Beatmap.PlayField;
 
 			if (!playField.Contains(Position))
