@@ -11,11 +11,11 @@ namespace osu_automapper
 	{
 		public static Vector2 Zero = new Vector2(0f, 0f);
 		public static Vector2 One = new Vector2(1f, 1f);
-		public static Vector2 NegativeOne = new Vector2(-1, -1);
-		public static Vector2 Up = new Vector2(0, -1);
-		public static Vector2 Down = new Vector2(0, 1);
-		public static Vector2 Left = new Vector2(-1, 0);
-		public static Vector2 Right = new Vector2(1, 0);
+		public static Vector2 NegativeOne = new Vector2(-1f, -1f);
+		public static Vector2 Up = new Vector2(0f, -1f);
+		public static Vector2 Down = new Vector2(0f, 1f);
+		public static Vector2 Left = new Vector2(-1f, 0f);
+		public static Vector2 Right = new Vector2(1f, 0f);
 
 		public float X;
 		public float Y;
@@ -215,7 +215,7 @@ namespace osu_automapper
 			{
 				int hash = 17;
 				hash = hash * 37 + X.GetHashCode();
-				hash = hash * 37 * Y.GetHashCode();
+				hash = hash * 37 + Y.GetHashCode();
 				return hash;
 			}
 		}
