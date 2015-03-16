@@ -254,6 +254,7 @@ namespace osu_automapper
                 double threshold = Double.Parse("1.0E-40");
                 var peakData = analyzer.CreatePeakDataAt((int)timestamp, 450);
                 Console.WriteLine(peakData.ToString());
+
                 if (peakData.value < threshold)
                 {
                     //Continue without adding a beat here if no sound was detected.
