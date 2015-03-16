@@ -51,12 +51,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\AudioAnalyzer.cs" />
-    <Compile Include="Classes\Beatmap.cs" />
-    <Compile Include="Classes\HitObject.cs" />
-    <Compile Include="Classes\HitObjects\HitCircle.cs" />
-    <Compile Include="Classes\HitObjects\HitSlider.cs" />
-    <Compile Include="Classes\HitObjects\HitSpinner.cs" />
+    <Compile Include="Math\AABB.cs" />
+    <Compile Include="Core\AudioAnalyzer.cs" />
+    <Compile Include="Core\Beatmap.cs" />
+    <Compile Include="Helpers\EnumHelper.cs" />
+    <Compile Include="GameplayElements\HitObject.cs" />
+    <Compile Include="GameplayElements\HitObjectSoundType.cs" />
+    <Compile Include="GameplayElements\HitObjects\HitCircle.cs" />
+    <Compile Include="GameplayElements\HitObjects\HitSlider.cs" />
+    <Compile Include="GameplayElements\HitObjects\HitSpinner.cs" />
+    <Compile Include="GameplayElements\HitObjectType.cs" />
+    <Compile Include="Helpers\MathHelper.cs" />
+    <Compile Include="Core\NoteDuration.cs" />
+    <Compile Include="Core\PeakData.cs" />
+    <Compile Include="Helpers\RandomHelper.cs" />
+    <Compile Include="GameplayElements\SliderCurveType.cs" />
+    <Compile Include="Math\Vector2.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
