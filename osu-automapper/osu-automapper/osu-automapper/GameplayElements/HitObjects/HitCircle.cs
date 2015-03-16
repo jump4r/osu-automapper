@@ -35,9 +35,9 @@ namespace osu_automapper
 
 			var oldPos = Position;
 
-			int angle = RandomHelper.Range(0, validAngles.Length);
-			float x = MaxDistance * (float)Math.Cos(validAngles[angle]);
-			float y = MaxDistance * (float)Math.Sin(validAngles[angle]);
+			int angleIndex = RandomHelper.Range(0, validAngles.Length);
+			float x = MaxDistance * (float)Math.Cos(validAngles[angleIndex]);
+			float y = MaxDistance * (float)Math.Sin(validAngles[angleIndex]);
 
 			Position = PrevPos + new Vector2(x, y);
 			var playField = Beatmap.PlayField;
@@ -65,7 +65,7 @@ namespace osu_automapper
 
 		public override string SerializeForOsu()
 		{
-			return string.Format("{0},{1},{2},{3},0:0:0:0:", MathHelper.RoundToInt(Position.X), MathHelper.RoundToInt(Position.Y), Time, (int)HitType, (int)HitSound);
+			return string.Format("{0},{1},{2},{3},{4},0:0:0:0:", MathHelper.RoundToInt(Position.X), MathHelper.RoundToInt(Position.Y), Time, (int)HitType, (int)HitSound);
 		}
 
 	}

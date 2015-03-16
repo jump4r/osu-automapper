@@ -26,6 +26,7 @@ namespace osu_automapper
 		public HitSlider(Vector2 startPosition, int time, HitObjectType hitType, HitObjectSoundType hitsound,
 			SliderCurveType sliderType, int repeat, float velocity, int numCurves, int length)
 		{
+			this.startPosition = startPosition;
 			this.Position = startPosition;
 			this.Time = time;
 
@@ -38,7 +39,7 @@ namespace osu_automapper
 			this.Length = length;
 			this.NumCurves = numCurves;
 
-			startPosition = Position;
+
 
 			ConstructSlider();
 		}
@@ -54,6 +55,7 @@ namespace osu_automapper
 					GenerateLinearSlider();
 					break;
 				case SliderCurveType.PSpline: // P-spline
+					SliderType = SliderCurveType.Bezier;
 					GenerateBezierSlider();
 					break;
 
