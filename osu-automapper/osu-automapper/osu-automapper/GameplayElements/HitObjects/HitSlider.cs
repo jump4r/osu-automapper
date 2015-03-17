@@ -105,7 +105,21 @@ namespace osu_automapper
 			float x = Position.X + (float)Math.Cos(angle) * segmentLength;
 			float y = Position.Y + (float)Math.Sin(angle) * segmentLength;
 
+			var oldPos = Position;
 			Position = new Vector2(x, y);
+
+			var playField = Beatmap.PlayField;
+
+			if (!playField.Contains(Position))
+			{
+				Vector2 heading = Position - oldPos;
+				Vector2 edgeDir = playField.FindOverlapEdge(Position);
+
+				Position = Vector2.Project(heading, edgeDir) + oldPos;
+
+				// Hack for corners. Proper collision solving required if you want consistency with distances.
+				Position = playField.Clamp(Position);
+			}
 
 			Console.WriteLine("New Point - x: " + Position.X + ", y: " + Position.Y);
 
