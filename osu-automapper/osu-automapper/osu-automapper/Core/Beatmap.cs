@@ -30,6 +30,10 @@ namespace osu_automapper
 		private float sliderVelocity = 1.5f;
 		private int sliderLengthPerBeat;
 
+        // Used for combo resets
+        private float comboChangeFlag = NoteDuration.Whole * 2; // Change combo every 2 measures
+        private float currentComboLength = 0f;
+
 		// Difficulty
 		private float maxNoteDistance = 100;
 
@@ -135,13 +139,23 @@ namespace osu_automapper
 				{
 					float x = RandomHelper.Range(Beatmap.PlayField.Left, Beatmap.PlayField.Right + 1);
 					float y = RandomHelper.Range(Beatmap.PlayField.Top, Beatmap.PlayField.Bottom + 1);
+                    bool newCombo = false;
+
+                    // Determine if new Combo is needed
+                    if (currentComboLength > comboChangeFlag)
+                    {
+                        newCombo = true;
+                        currentComboLength = currentComboLength % comboChangeFlag;   
+                    }
 
 					if (currentBeat % beatsPerMeasure == 0)
 					{
 						// Generate a random slider.
 						var sliderType = EnumHelper.GetRandom<SliderCurveType>();
+                        HitObjectType hitType = (newCombo) ? HitObjectType.SliderNewCombo : HitObjectType.Slider;
+                        
 
-						string sliderData = GetSliderData(new Vector2(x, y), (int)timestamp, HitObjectType.Slider,
+						string sliderData = GetSliderData(new Vector2(x, y), (int)timestamp, hitType,
 												HitObjectSoundType.None, sliderType, 1, sliderVelocity, RandomHelper.Range(minSliderCurves, maxSliderCurves + 1));
 
 						osuFile.WriteLine(sliderData);
@@ -150,22 +164,29 @@ namespace osu_automapper
 
 						timestamp += AddTime(NoteDuration.Half);
 						currentBeat += (int)NoteDuration.Half;
+                        currentComboLength += NoteDuration.Half;
 
 					}
 					else
 					{
-						string circleData = GetHitCircleData(new Vector2(x, y), (int)timestamp, HitObjectType.Normal,
+                        HitObjectType hitType = (newCombo) ? HitObjectType.NormalNewCombo : HitObjectType.Normal;
+
+						string circleData = GetHitCircleData(new Vector2(x, y), (int)timestamp, hitType,
 												HitObjectSoundType.None, prevPoint);
 
 						osuFile.WriteLine(circleData);
 
 						numCircles++;
 
+                        currentComboLength += NoteDuration.Half;
 						timestamp += AddTime(NoteDuration.Quarter);
 						currentBeat += (int)NoteDuration.Quarter;
 
 						prevPoint = new Vector2(x, y);
 					}
+
+                    // New Combo
+                    
 				}
 
 				Console.WriteLine("Number of circles " + numCircles);
