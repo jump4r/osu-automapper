@@ -24,7 +24,7 @@ namespace osu_automapper
 
 		public override string ToString()
 		{
-			return string.Format("index: {0}time: {1}value: {2}", index.ToString(), time.ToString(), value.ToString());
+			return string.Format("index:{0} time:{1} value:{2}", index.ToString(), time.ToString(), value.ToString());
 		}
 	}
 }

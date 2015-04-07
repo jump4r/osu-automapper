@@ -242,7 +242,7 @@ namespace osu_automapper
 
 					////EXAMPLE (NOT TESTED):
 					double threshold = Double.Parse("1.0E-40");
-					var peakData = analyzer.CreatePeakDataAt((int)timestamp, 450);
+					var peakData = analyzer.CreatePeakDataAt((int)timestamp, 10000);
 					Console.WriteLine(peakData.ToString());
 					if (peakData.value < threshold)
 					{

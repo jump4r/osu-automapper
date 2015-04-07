@@ -35,14 +35,14 @@ namespace osu_automapper
             this.pcm = new AudioFileReader(mp3path);
 			this.beatmap = beatmap;
 			Setup();
-            CreatePeakData();
+            //CreatePeakData();
 		}
 
 		//Setups everything that CreatePeakData() and CreatePeakDataAt() will need.
 		private void Setup()
 		{
 			peakData = new List<PeakData>();
-
+            beatmap.bpm = 200;
 			bpm = beatmap.bpm;
 
 			offsetInSeconds = (double)offset / 1000.0;
@@ -70,18 +70,30 @@ namespace osu_automapper
 			double sum = 0;
 			for (var i = 0; i < buffer.Length; i = i + 2)
 			{
-				double sample = BitConverter.ToInt16(buffer, i) / 32768.0;
-				sum += (sample * sample);
+                if (i + 1 < buffer.Length)
+                {
+                    double sample = BitConverter.ToInt16(buffer, i) / 32768.0;
+                    sum += (sample * sample);
+                    if(sample != 0)
+                    {
+                        //Console.WriteLine("NOT ZERO");
+                     
+                    }
+                }
 			}
 
-			double rms = Math.Sqrt(sum / (buffer.Length / 2));
+			double rms = Math.Sqrt(sum / (double)(buffer.Length / 2));
+
 
 			var decibel = 20 * Math.Log10(rms);
-
+            if(double.IsInfinity(decibel))
+            {
+                decibel = double.MinValue;
+            }
 			//Console.Write("sum:" + sum);
 			//Console.Write("rms:" + rms);
 			//Console.WriteLine(decibel);
-
+            Console.WriteLine("Decibal:" + decibel);
 			return new PeakData(index, time, decibel);
 		}
 
@@ -109,9 +121,10 @@ namespace osu_automapper
 				ret = this.pcm.Read(buffer, 0, interval);//.Read automatically increments stream buffer index
                 
 				peakData.Add(CalculatePeak(current, current, buffer));
-
+                
 				current += interval;
-			} while (this.pcm.Position < this.pcm.Length);
+
+			} while (this.pcm.Position + interval < this.pcm.Length);
 
 			return this.peakData;
 		}
