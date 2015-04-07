@@ -20,7 +20,7 @@ namespace osu_automapper
 
 		private Beatmap beatmap;
 		private AudioAnalyzer analyzer;
-		private WaveStream pcm;
+		private string mp3FilePath = "";
 		private BlockAlignReductionStream stream = null;
 		private DirectSoundOut output = null;
 
@@ -61,13 +61,14 @@ namespace osu_automapper
 
 			DisposeWave();
 
-			Console.WriteLine("FileName is: " + open.FileName);
-			pcm = WaveFormatConversionStream.CreatePcmStream(new Mp3FileReader(open.FileName));
-
-			stream = new BlockAlignReductionStream(pcm);
-			output = new DirectSoundOut();
-			output.Init(stream);
-			output.Play();
+            this.mp3FilePath = open.FileName;
+			Console.WriteLine("Opened mp3 file: " + this.mp3FilePath);
+			WaveStream pcm = WaveFormatConversionStream.CreatePcmStream(new Mp3FileReader(this.mp3FilePath));
+            
+			//stream = new BlockAlignReductionStream(pcm);
+			//output = new DirectSoundOut();
+			//output.Init(stream);
+			//output.Play();
 
 			pauseButton.Enabled = true;
 		}
@@ -134,9 +135,9 @@ namespace osu_automapper
 
 		private void createButton_Click(object sender, EventArgs e)
 		{
-			if (pcm == null || beatmap == null)
+			if (this.mp3FilePath == "" || beatmap == null)
 			{
-				if (pcm == null)
+				if (this.mp3FilePath == "")
 				{
 					Console.WriteLine("Error:No MP3 selected.");
 				}
@@ -149,8 +150,8 @@ namespace osu_automapper
 				return;
 			}
 
-			analyzer = new AudioAnalyzer(pcm, beatmap);
-			beatmap.CreateRandomBeatmap(analyzer);
+			this.analyzer = new AudioAnalyzer(this.mp3FilePath, this.beatmap);
+			this.beatmap.CreateRandomBeatmap(this.analyzer);
 		}
 
 		private void waveViewer1_MouseDown(object sender, MouseEventArgs e)

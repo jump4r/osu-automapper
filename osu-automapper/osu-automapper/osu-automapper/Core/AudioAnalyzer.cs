@@ -10,7 +10,8 @@ namespace osu_automapper
 {
 	public class AudioAnalyzer
 	{
-		private WaveStream pcm;
+		//private WaveStream pcm;
+        private AudioFileReader pcm;
 		private Beatmap beatmap;
 		private List<PeakData> peakData;
 
@@ -29,11 +30,12 @@ namespace osu_automapper
 		private int current;
 
 		//TODO: Add various beatmap settings to constructor
-		public AudioAnalyzer(WaveStream pcm, Beatmap beatmap)
+		public AudioAnalyzer(string mp3path, /*WaveStream pcm,*/ Beatmap beatmap)
 		{
-			this.pcm = pcm;
+            this.pcm = new AudioFileReader(mp3path);
 			this.beatmap = beatmap;
 			Setup();
+            CreatePeakData();
 		}
 
 		//Setups everything that CreatePeakData() and CreatePeakDataAt() will need.
@@ -52,7 +54,7 @@ namespace osu_automapper
 			//Convert BPM to bytesPerInterval
 			//bps = bpm / 60            
 			bps = ((float)bpm) / 60f;
-			interval = (int)((float)bytesPerSecond * bps);
+			interval = (int)(((float)bytesPerSecond) * bps);
 
 			Console.WriteLine("Debug:bmp/bps:" + bpm + "/" + bps);
 			Console.WriteLine("Debug:byte interval:" + interval);
@@ -76,9 +78,9 @@ namespace osu_automapper
 
 			var decibel = 20 * Math.Log10(rms);
 
-			Console.Write("sum:" + sum);
-			Console.Write("rms:" + rms);
-			Console.WriteLine(decibel);
+			//Console.Write("sum:" + sum);
+			//Console.Write("rms:" + rms);
+			//Console.WriteLine(decibel);
 
 			return new PeakData(index, time, decibel);
 		}
@@ -91,20 +93,25 @@ namespace osu_automapper
 		public List<PeakData> CreatePeakData()
 		{
 			Setup();
-
-			byte[] buffer = new byte[interval];
+			
 			peakData = new List<PeakData>();
-			this.pcm.Position = index;
-
+			//this.pcm.Position = index;
+            Console.WriteLine("INDEX: " + this.pcm.Position);
+            Console.WriteLine("INTERVAL: " + interval);
+            Console.WriteLine("LENGTH: " + this.pcm.Length);
 			int ret = 0;
 			do
 			{
+                interval = (int) (this.pcm.Length - this.pcm.Position < interval ? this.pcm.Length - this.pcm.Position : interval);
+                byte[] buffer = new byte[interval];
+                Console.WriteLine("Buff Index:" + this.pcm.Position);
+                
 				ret = this.pcm.Read(buffer, 0, interval);//.Read automatically increments stream buffer index
-
+                
 				peakData.Add(CalculatePeak(current, current, buffer));
 
 				current += interval;
-			} while (ret != -1);
+			} while (this.pcm.Position < this.pcm.Length);
 
 			return this.peakData;
 		}
@@ -124,16 +131,8 @@ namespace osu_automapper
 			double offsetInSeconds = (double)currentMillisecond / 1000.0;
 			int index = (int)(offsetInSeconds * bytesPerSecond);
 
-			int size = (index + range) - (index - range);
+            int size = range * 2;
 			byte[] buffer = new byte[size];
-
-			/*
-			Console.Write("CMS:" + currentMillisecond);
-			Console.Write(" OIS:" + offsetInSeconds);
-			Console.Write(" Index:" + index);
-			Console.Write(" BPS:" + bytesPerSecond);
-			Console.WriteLine(" Size:" + size);
-			*/
 
 			this.pcm.Position = index - range;
 			int ret = this.pcm.Read(buffer, 0, buffer.Length);

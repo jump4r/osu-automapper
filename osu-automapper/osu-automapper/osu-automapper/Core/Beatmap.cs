@@ -232,15 +232,15 @@ namespace osu_automapper
 
 
 					////EXAMPLE (NOT TESTED):
-					//double threshold = Double.Parse("1.0E-40");
-					//var peakData = analyzer.CreatePeakDataAt((int)timestamp, 450);
-					//Console.WriteLine(peakData.ToString());
-					//if (peakData.value < threshold)
-					//{
-					//	//Continue without adding a beat here if no sound was detected.
-					//	timestamp += AddTime(NoteDuration.Half);
-					//	continue;
-					//}
+					double threshold = Double.Parse("1.0E-40");
+					var peakData = analyzer.CreatePeakDataAt((int)timestamp, 450);
+					Console.WriteLine(peakData.ToString());
+					if (peakData.value < threshold)
+					{
+						//Continue without adding a beat here if no sound was detected.
+						timestamp += AddTime(NoteDuration.Half);
+						continue;
+					}
 					////END EXAMPLE
 
 					if (currentBeat % beatsPerMeasure == 0)
