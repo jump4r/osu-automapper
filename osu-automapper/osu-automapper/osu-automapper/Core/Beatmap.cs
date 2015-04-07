@@ -5,17 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using NAudio.Wave;
 
 namespace osu_automapper
 {
 	public class Beatmap
 	{
-		public static AABB PlayField = new AABB(new Vector2(190f, 255f), new Vector2(180f, 245f));
+		public static AABB PlayField = new AABB(new Vector2(255f, 190f), new Vector2(245f, 180f));
 
 		// Beat map text
 		// TODO: Replace string array with file?
-		private string[] text;
-		private string fileName;
+		private string[] fileData;
+		private string filePath;
 
 		// Beatmap metadata.
 		public int bpm { get; set; }
@@ -29,6 +30,10 @@ namespace osu_automapper
 		private float sliderVelocity = 1.5f;
 		private int sliderLengthPerBeat;
 
+        // Used for combo resets
+        private float comboChangeFlag = NoteDuration.Whole * 2; // Change combo every 2 measures
+        private float currentComboLength = 0f;
+
 		// Difficulty
 		private float maxNoteDistance = 100;
 
@@ -37,22 +42,19 @@ namespace osu_automapper
 
 		//private char[] sliderTypes = new char[] { 'L', 'B', 'P' };
 
-		public Beatmap(string fileName)
+		public Beatmap(string filePath)
 		{
 			// TODO: Complete member initialization
 
-			this.fileName = fileName;
+			this.filePath = filePath;
 
-			// Random is so bad and I'm actually furious
-			int seed = (int)DateTime.Now.Ticks;
-
-			Console.WriteLine("Loading .osu file..." + fileName);
-			string fileRawText = System.IO.File.ReadAllText(fileName);
+			Console.WriteLine("Loading .osu file..." + filePath);
+			string fileRawText = File.ReadAllText(filePath);
 			string[] fileSplitText = fileRawText.Split(new String[] { Environment.NewLine }, StringSplitOptions.None);
 
 			Console.WriteLine(fileSplitText[4]);
 
-			this.text = fileSplitText;
+			this.fileData = fileSplitText;
 
 			sliderLengthPerBeat = (int)(sliderVelocity * 100 / (beatsPerMeasure));
 
@@ -71,130 +73,137 @@ namespace osu_automapper
 		/// </summary>
 		public void LoadBeatmapFromFile()
 		{
-			for (int i = 0; i < text.Length; i++)
+			for (int i = 0; i < fileData.Length; i++)
 			{
 				// Get the init timing points and the milleseconds per beat.
 
-				if (text[i] == "[TimingPoints]")
+				if (fileData[i] == "[TimingPoints]")
 				{
-					string[] initTimingPonits = text[i + 1].Split(',');
+					string[] initTimingPonits = fileData[i + 1].Split(',');
 					mpb = float.Parse(initTimingPonits[1]);
 					offset = int.Parse(initTimingPonits[0]);
 				}
-
-				else if (text[i] == "[General]")
+				else if (fileData[i] == "[General]")
 				{
-					string mp3FilePath = GetMP3FilePath(fileName, i + 1);
-					NAudio.Wave.WaveStream pcm = NAudio.Wave.WaveFormatConversionStream.CreatePcmStream(new NAudio.Wave.Mp3FileReader(mp3FilePath));
+					string mp3FilePath = GetAudioFilePath(fileData[i + 1], Path.GetDirectoryName(filePath));
+
+					WaveStream pcm = WaveFormatConversionStream.CreatePcmStream(new Mp3FileReader(mp3FilePath));
 					TimeSpan ts = pcm.TotalTime;
+
 					songLength = ((ts.Minutes * 60) + ts.Seconds) * 1000 + ts.Milliseconds;
+
 					Console.WriteLine("Total Song Length is: " + songLength);
 				}
-
-				else if (text[i] == "[Difficulty]")
+				else if (fileData[i] == "[Difficulty]")
 				{
-					string[] sliderVelText = text[i + 5].Split(':');
+					string[] sliderVelText = fileData[i + 5].Split(':');
 					sliderVelocity = float.Parse(sliderVelText[1]);
+
 					Console.WriteLine("Slider Velocity is: " + sliderVelocity);
 				}
 			}
 		}
 
 		// Gets the filepath for the mp3 file.
-		private string GetMP3FilePath(string filePath, int lineIndex)
+		private string GetAudioFilePath(string audioFileNameEntry, string directory)
 		{
-			string[] path = filePath.Split('\\');
+			var path = Path.Combine(directory, audioFileNameEntry.Split(':')[1].Trim());
 
-			// For Debug/Testing purposes. Repleace with general case
-			string[] temp = text[lineIndex].Split(':');
-			string mp3FileName = temp[1].Trim();
+			Console.WriteLine("MP3 Path is: " + path);
 
-			path[path.Length - 1] = mp3FileName;
-			Console.WriteLine(path[path.Length - 1]);
-			string rtn = "";
-			for (int i = 0; i < path.Length; i++)
-			{
-				rtn += path[i];
-				if (i != path.Length - 1)
-					rtn += "\\";
-			}
-
-			Console.WriteLine("MP3 Path is: " + rtn);
-			return rtn;
+			return path;
 		}
 
 		// Creates a random beatmap. This APPENDS to the current file. 
 		// TODO: Need to make sure we are not overwriting other data, and starting from the correct location.
 		public void CreateRandomBeatmap()
 		{
-			if (!File.Exists(this.fileName))
+			if (!File.Exists(this.filePath))
 			{
-				Console.WriteLine("Error: File not found.(" + this.fileName + ")");
+				Console.WriteLine("Error: File not found.(" + this.filePath + ")");
 				return;
 			}
 
-			Console.WriteLine("Generating Random Beatmap. Appending to file..." + this.fileName);
+			Console.WriteLine("Generating Random Beatmap. Appending to file..." + this.filePath);
 
-			StreamWriter osu_file = new StreamWriter(this.fileName, true);
-			int numCircles = 0;
-
-			// Basic Beatmap Creation
-			var prevPoint = Vector2.NegativeOne;
-
-			float timestamp = (float)offset;
-			// for (float timestamp = (float)offset; timestamp < songLength; timestamp += mpb)
-			while (timestamp < songLength)
+			using (var osuFile = new StreamWriter(this.filePath, true))
 			{
-				float x = RandomHelper.Range(Beatmap.PlayField.Left, Beatmap.PlayField.Right + 1);
-				float y = RandomHelper.Range(Beatmap.PlayField.Top, Beatmap.PlayField.Bottom + 1);
+				int numCircles = 0;
 
-				if (currentBeat % beatsPerMeasure == 0)
+				// Basic Beatmap Creation
+				var prevPoint = Vector2.NegativeOne;
+
+				float timestamp = (float)offset;
+				// for (float timestamp = (float)offset; timestamp < songLength; timestamp += mpb)
+				while (timestamp < songLength)
 				{
-					// Generate a random slider.
-					var sliderType = EnumHelper.GetRandom<SliderCurveType>();
+					float x = RandomHelper.Range(Beatmap.PlayField.Left, Beatmap.PlayField.Right + 1);
+					float y = RandomHelper.Range(Beatmap.PlayField.Top, Beatmap.PlayField.Bottom + 1);
+                    bool newCombo = false;
 
-					string sliderData = GetSliderData(new Vector2(x, y), (int)timestamp, HitObjectType.Slider,
-											HitObjectSoundType.None, sliderType, 1, sliderVelocity, RandomHelper.Range(minSliderCurves, maxSliderCurves + 1));
+                    // Determine if new Combo is needed
+                    if (currentComboLength > comboChangeFlag)
+                    {
+                        newCombo = true;
+                        currentComboLength = currentComboLength % comboChangeFlag;   
+                    }
 
-					osu_file.WriteLine(sliderData);
+					if (currentBeat % beatsPerMeasure == 0)
+					{
+						// Generate a random slider.
+						var sliderType = EnumHelper.GetRandom<SliderCurveType>();
+                        HitObjectType hitType = (newCombo) ? HitObjectType.SliderNewCombo : HitObjectType.Slider;
+                        
 
-					numCircles++;
+						string sliderData = GetSliderData(new Vector2(x, y), (int)timestamp, hitType,
+												HitObjectSoundType.None, sliderType, 1, sliderVelocity, RandomHelper.Range(minSliderCurves, maxSliderCurves + 1));
 
-					timestamp += AddTime(NoteDuration.Half);
-					currentBeat += (int)NoteDuration.Half;
+						osuFile.WriteLine(sliderData);
 
+						numCircles++;
+
+						timestamp += AddTime(NoteDuration.Half);
+						currentBeat += (int)NoteDuration.Half;
+                        currentComboLength += NoteDuration.Half;
+
+					}
+					else
+					{
+                        HitObjectType hitType = (newCombo) ? HitObjectType.NormalNewCombo : HitObjectType.Normal;
+
+						string circleData = GetHitCircleData(new Vector2(x, y), (int)timestamp, hitType,
+												HitObjectSoundType.None, prevPoint);
+
+						osuFile.WriteLine(circleData);
+
+						numCircles++;
+
+                        currentComboLength += NoteDuration.Half;
+						timestamp += AddTime(NoteDuration.Quarter);
+						currentBeat += (int)NoteDuration.Quarter;
+
+						prevPoint = new Vector2(x, y);
+					}
+
+                    // New Combo
+                    
 				}
-				else
-				{
-					string circleData = GetHitCircleData(new Vector2(x, y), (int)timestamp, HitObjectType.Normal,
-											HitObjectSoundType.None, prevPoint);
 
-					osu_file.WriteLine(circleData);
-
-					numCircles++;
-
-					timestamp += AddTime(NoteDuration.Quarter);
-					currentBeat += (int)NoteDuration.Quarter;
-
-					prevPoint = new Vector2(x, y);
-				}
+				Console.WriteLine("Number of circles " + numCircles);
 			}
-
-			Console.WriteLine("Number of circles " + numCircles);
-			osu_file.Close();
 		}
 
 		public void CreateRandomBeatmap(AudioAnalyzer analyzer)
 		{
-			if (!File.Exists(this.fileName))
+			if (!File.Exists(this.filePath))
 			{
-				Console.WriteLine("Error: File not found.(" + this.fileName + ")");
+				Console.WriteLine("Error: File not found.(" + this.filePath + ")");
 				return;
 			}
 
-			Console.WriteLine("Generating Random Beatmap. Appending to file..." + this.fileName);
+			Console.WriteLine("Generating Random Beatmap. Appending to file..." + this.filePath);
 
-			using (var osuFile = new StreamWriter(this.fileName, true))
+			using (var osuFile = new StreamWriter(this.filePath, true))
 			{
 				int numCircles = 0;
 

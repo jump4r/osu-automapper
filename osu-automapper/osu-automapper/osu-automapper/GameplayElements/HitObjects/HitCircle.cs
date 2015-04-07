@@ -47,7 +47,7 @@ namespace osu_automapper
 				Vector2 heading = Position - oldPos;
 				Vector2 edgeDir = playField.FindOverlapEdge(Position);
 
-				Position = Vector2.Project(heading, edgeDir);
+				Position = Vector2.Project(heading, edgeDir) + oldPos;
 
 				// Hack for corners. Proper collision solving required if you want consistency with distances.
 				Position = playField.Clamp(Position);

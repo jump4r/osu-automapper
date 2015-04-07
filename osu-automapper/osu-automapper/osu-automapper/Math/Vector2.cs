@@ -104,11 +104,6 @@ namespace osu_automapper
 			return new Vector2(v.X / f, v.Y / f);
 		}
 
-		public static Vector2 operator /(float f, Vector2 v)
-		{
-			return new Vector2(v.X / f, v.Y / f);
-		}
-
 		public static Vector2 Abs(Vector2 v)
 		{
 			return new Vector2((float)Math.Abs(v.X), (float)Math.Abs(v.Y));
@@ -218,6 +213,11 @@ namespace osu_automapper
 				hash = hash * 37 + Y.GetHashCode();
 				return hash;
 			}
+		}
+
+		public override string ToString()
+		{
+			return "{" + X + ", " + Y + "}";
 		}
 	}
 }

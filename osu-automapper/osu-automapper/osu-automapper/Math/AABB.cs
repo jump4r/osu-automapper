@@ -99,7 +99,7 @@ namespace osu_automapper
 			else if (pt.X > max.X) { y = 1; }
 
 			if (pt.Y < min.Y) { x = 1; }
-			else if (pt.Y > Min.X) { x = -1; }
+			else if (pt.Y > max.Y) { x = -1; }
 
 			return new Vector2(x, y).Normalized;
 		}

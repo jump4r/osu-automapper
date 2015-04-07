@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace osu_automapper
 {
-	class MathHelper
+	public static class MathHelper
 	{
-		public const double Rad2Deg = 180 / Math.PI;
-		public const double Deg2Rad = Math.PI / 180;
+		public const double Rad2Deg = 180.0 / Math.PI;
+		public const double Deg2Rad = Math.PI / 180.0;
 
 		public static float Clamp(float value, float min, float max)
 		{
