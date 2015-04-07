@@ -42,8 +42,7 @@ namespace osu_automapper
 		private void Setup()
 		{
 			peakData = new List<PeakData>();
-            beatmap.bpm = 200;
-			bpm = beatmap.bpm;
+			bpm = (int)(60 / (beatmap.mpb / 1000));
 
 			offsetInSeconds = (double)offset / 1000.0;
 
