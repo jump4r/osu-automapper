@@ -13,7 +13,7 @@ namespace osu_automapper
 		public float MaxDistance { get; set; }
 
 		public HitCircle() { }
-		public HitCircle(Vector2 position, int time, HitObjectType hitType, HitObjectSoundType hitSound, Vector2 prevPoint, float maxDistance)
+		public HitCircle(Vector2 position, int time, HitObjectType hitType, HitObjectSoundType hitSound, Vector2 prevPoint, float maxDistance, bool patternSkip = false)
 		{
 			Position = position;
 			this.Time = time;
@@ -23,7 +23,10 @@ namespace osu_automapper
 			this.PrevPos = prevPoint;
 			this.MaxDistance = maxDistance;
 
-			CalculateHitPoint();
+            if (!patternSkip) // Skips caclulating the new point if circle is part of a pattern .
+            {
+                CalculateHitPoint();
+            }
 		}
 
 		private void CalculateHitPoint()

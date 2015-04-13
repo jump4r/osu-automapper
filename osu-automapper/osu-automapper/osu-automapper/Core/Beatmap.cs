@@ -25,7 +25,7 @@ namespace osu_automapper
 		public int offset { get; set; } // Offset of the beatmap.
 
 		// This is implying a 4/4 Time Signature. Any others might be out of scope
-		private int currentBeat = 0;
+		private float currentBeat = 0;
 		private int beatsPerMeasure = 4;
 		private float sliderVelocity = 1.5f;
 		private int sliderLengthPerBeat;
@@ -147,6 +147,7 @@ namespace osu_automapper
                         newCombo = true;
                         currentComboLength = currentComboLength % comboChangeFlag;   
                     }
+                    Console.WriteLine("currentBeat" + currentBeat);
 
 					if (currentBeat % beatsPerMeasure == 0)
 					{
@@ -163,7 +164,7 @@ namespace osu_automapper
 						numCircles++;
 
 						timestamp += AddTime(NoteDuration.Half);
-						currentBeat += (int)NoteDuration.Half;
+						currentBeat += NoteDuration.Half;
                         currentComboLength += NoteDuration.Half;
 
 					}
@@ -171,18 +172,34 @@ namespace osu_automapper
 					{
                         HitObjectType hitType = (newCombo) ? HitObjectType.NormalNewCombo : HitObjectType.Normal;
 
-						string circleData = GetHitCircleData(new Vector2(x, y), (int)timestamp, hitType,
-												HitObjectSoundType.None, prevPoint);
+                        // Test patterns!
+                        if (RandomHelper.NextFloat < 0.3)
+                        {
+                            Triple triple = new Triple(PlayField.Center, (int)timestamp, HitObjectSoundType.None, prevPoint, mpb);
+                            osuFile.WriteLine(triple.SerializeForOsu());
 
-						osuFile.WriteLine(circleData);
+                            currentComboLength += triple.totalLength;
+                            timestamp += AddTime(triple.totalLength);
+                            currentBeat += triple.totalLength;
 
-						numCircles++;
+                            prevPoint = PlayField.Center;
+                        }
 
-                        currentComboLength += NoteDuration.Half;
-						timestamp += AddTime(NoteDuration.Quarter);
-						currentBeat += (int)NoteDuration.Quarter;
+                        else
+                        {
+                            string circleData = GetHitCircleData(new Vector2(x, y), (int)timestamp, hitType,
+                                                    HitObjectSoundType.None, prevPoint);
 
-						prevPoint = new Vector2(x, y);
+                            osuFile.WriteLine(circleData);
+
+                            numCircles++;
+
+                            currentComboLength += NoteDuration.Eighth;
+                            timestamp += AddTime(NoteDuration.Eighth);
+                            currentBeat += NoteDuration.Eighth;
+
+                            prevPoint = new Vector2(x, y);
+                        }
 					}
 
                     // New Combo
@@ -241,7 +258,7 @@ namespace osu_automapper
 
 
 					////EXAMPLE (NOT TESTED):
-					double threshold = Double.Parse("1.0E-40");
+                    double threshold = Double.Parse("1.0E-40");
 					var peakData = analyzer.CreatePeakDataAt((int)timestamp, 10000);
 					Console.WriteLine(peakData.ToString());
 					if (peakData.value < threshold)
