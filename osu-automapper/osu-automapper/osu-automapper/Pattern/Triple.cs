@@ -26,13 +26,23 @@ namespace osu_automapper
             this.HitType = (int)HitObjectType.Normal;
             this.HitSound = (int)hitSound;
 
+            // Start at position determined by the first HitCircle. Then determine the rest of the points based off of that position.
             for (int i = 0; i < numObjects; i++)
             {
-                if (i != 0) {
+                if (i == 0)
+                {
+                    var hc = new HitCircle(startPos, (int)(time + (subsetLength * i * mpb)), (HitObjectType)HitType, (HitObjectSoundType)HitSound, prevPoint, 10f, false);
+                    startPos = hc.Position;
+                    hitCircles.Add(hc);
+                    continue;
+                }
+
+                else {
                     Vector2 newPos = new Vector2(startPos.X + xOffset, startPos.Y + yOffset);
                     startPos =  newPos;
+                    hitCircles.Add(new HitCircle(startPos, (int)(time + (subsetLength * i * mpb)), (HitObjectType)HitType, (HitObjectSoundType)HitSound, prevPoint, 10f, true));
                 }
-                hitCircles.Add(new HitCircle(startPos, (int)(time + (subsetLength * i * mpb)), (HitObjectType)HitType, (HitObjectSoundType)HitSound, prevPoint, 10f, true));
+               
             }
         }
 

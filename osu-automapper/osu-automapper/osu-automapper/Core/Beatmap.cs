@@ -173,7 +173,7 @@ namespace osu_automapper
                         HitObjectType hitType = (newCombo) ? HitObjectType.NormalNewCombo : HitObjectType.Normal;
 
                         // Test patterns!
-                        if (RandomHelper.NextFloat < 0.3)
+                        if (RandomHelper.NextFloat < 0.12)
                         {
                             Triple triple = new Triple(PlayField.Center, (int)timestamp, HitObjectSoundType.None, prevPoint, mpb);
                             osuFile.WriteLine(triple.SerializeForOsu());
