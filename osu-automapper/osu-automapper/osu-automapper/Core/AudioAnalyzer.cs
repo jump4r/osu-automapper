@@ -29,6 +29,8 @@ namespace osu_automapper
 		private int index;
 		private int current;
 
+        private Dictionary<double, int> decibelCounts;
+
 		//TODO: Add various beatmap settings to constructor
 		public AudioAnalyzer(string mp3path, /*WaveStream pcm,*/ Beatmap beatmap)
 		{
@@ -60,6 +62,8 @@ namespace osu_automapper
 
 			index = (int)(offsetInSeconds * bytesPerSecond);
 			current = index;
+
+            decibelCounts = new Dictionary<double, int>();
 		}
 
 		//Creates PeakData from the array of pcm data
@@ -73,25 +77,17 @@ namespace osu_automapper
                 {
                     double sample = BitConverter.ToInt16(buffer, i) / 32768.0;
                     sum += (sample * sample);
-                    if(sample != 0)
-                    {
-                        //Console.WriteLine("NOT ZERO");
-                     
-                    }
                 }
 			}
 
 			double rms = Math.Sqrt(sum / (double)(buffer.Length / 2));
-
 
 			var decibel = 20 * Math.Log10(rms);
             if(double.IsInfinity(decibel))
             {
                 decibel = double.MinValue;
             }
-			//Console.Write("sum:" + sum);
-			//Console.Write("rms:" + rms);
-			//Console.WriteLine(decibel);
+
             Console.WriteLine("Decibal:" + decibel);
 			return new PeakData(index, time, decibel);
 		}
@@ -150,6 +146,7 @@ namespace osu_automapper
 			int ret = this.pcm.Read(buffer, 0, buffer.Length);
 			Console.WriteLine("Ret:" + ret);
 			PeakData pd = CalculatePeak(index, currentMillisecond, buffer);
+
 			//peakData.Add(pd);
 			return pd;
 		}
@@ -168,7 +165,17 @@ namespace osu_automapper
 
 		public void PerformRandomBeatDetection()
 		{
-			throw new NotImplementedException();
+             
+            //Retrive all of the data at once.
+            byte[] buffer = new byte[this.pcm.Length];
+            this.pcm.Position = 0;
+            int ret = this.pcm.Read(buffer, 0, buffer.Length);
+            PeakData pd = CalculatePeak(0, 0, buffer);
+
+            var data = CalculatePeak(0, 0, buffer);
+            var meanValue = data.value;
+
+            Console.WriteLine("Average:" + meanValue);
 		}
 	}
 }

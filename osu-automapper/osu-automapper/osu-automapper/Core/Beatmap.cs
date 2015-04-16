@@ -16,9 +16,11 @@ namespace osu_automapper
 		// Beat map text
 		// TODO: Replace string array with file?
 		private string[] fileData;
+
 		private string filePath;
 
-		// Beatmap metadata.
+		// Beatmap metadata.   
+        public string mp3Name {get; set;}
 		public int bpm { get; set; }
 		public float mpb { get; set; } // Milliseconds per beat
 		public float songLength { get; set; } // Length of song (in milliseconds).
@@ -76,42 +78,39 @@ namespace osu_automapper
 			for (int i = 0; i < fileData.Length; i++)
 			{
 				// Get the init timing points and the milleseconds per beat.
+                switch(fileData[i])
+                {
+                    case "[TimingPoints]":
 
-				if (fileData[i] == "[TimingPoints]")
-				{
-					string[] initTimingPonits = fileData[i + 1].Split(',');
-					mpb = float.Parse(initTimingPonits[1]);
-					offset = int.Parse(initTimingPonits[0]);
-				}
-				else if (fileData[i] == "[General]")
-				{
-					string mp3FilePath = GetAudioFilePath(fileData[i + 1], Path.GetDirectoryName(filePath));
+                        string[] initTimingPonits = fileData[i + 1].Split(',');
+					    mpb = float.Parse(initTimingPonits[1]);
+					    offset = int.Parse(initTimingPonits[0]);
+                        break;
+                    case "[General]":
 
-					WaveStream pcm = WaveFormatConversionStream.CreatePcmStream(new Mp3FileReader(mp3FilePath));
-					TimeSpan ts = pcm.TotalTime;
+                        string mp3FilePath = GetPath(fileData[i + 1], Path.GetDirectoryName(filePath));
+					    WaveStream pcm = WaveFormatConversionStream.CreatePcmStream(new Mp3FileReader(mp3FilePath));
+                        TimeSpan ts = pcm.TotalTime;
+					    songLength = ((ts.Minutes * 60) + ts.Seconds) * 1000 + ts.Milliseconds;
+					    Console.WriteLine("Total Song Length is: " + songLength);
+                        break;
+                    case "[Difficulty]":
 
-					songLength = ((ts.Minutes * 60) + ts.Seconds) * 1000 + ts.Milliseconds;
-
-					Console.WriteLine("Total Song Length is: " + songLength);
-				}
-				else if (fileData[i] == "[Difficulty]")
-				{
-					string[] sliderVelText = fileData[i + 5].Split(':');
-					sliderVelocity = float.Parse(sliderVelText[1]);
-
-					Console.WriteLine("Slider Velocity is: " + sliderVelocity);
-				}
+                        string[] sliderVelText = fileData[i + 5].Split(':');
+					    sliderVelocity = float.Parse(sliderVelText[1]);
+					    Console.WriteLine("Slider Velocity is: " + sliderVelocity);
+                        break;
+                    default:
+                        break;
+                }
 			}
 		}
 
 		// Gets the filepath for the mp3 file.
-		private string GetAudioFilePath(string audioFileNameEntry, string directory)
+		private string GetPath(string file, string directory)
 		{
-			var path = Path.Combine(directory, audioFileNameEntry.Split(':')[1].Trim());
-
-			Console.WriteLine("MP3 Path is: " + path);
-
-			return path;
+            this.mp3Name = file.Split(':')[1].Trim();
+			return Path.Combine(directory, this.mp3Name);
 		}
 
 		// Creates a random beatmap. This APPENDS to the current file. 

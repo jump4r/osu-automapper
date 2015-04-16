@@ -64,7 +64,7 @@ namespace osu_automapper
             this.mp3FilePath = open.FileName;
 			Console.WriteLine("Opened mp3 file: " + this.mp3FilePath);
 			WaveStream pcm = WaveFormatConversionStream.CreatePcmStream(new Mp3FileReader(this.mp3FilePath));
-            
+            waveViewer1.WaveStream = pcm;
 			//stream = new BlockAlignReductionStream(pcm);
 			//output = new DirectSoundOut();
 			//output.Init(stream);
@@ -75,6 +75,16 @@ namespace osu_automapper
 
 		private void pauseButton_Click(object sender, EventArgs e)
 		{
+            if(output == null)
+            {
+                if (waveViewer1.WaveStream != null)
+                {
+                    var stream = new BlockAlignReductionStream(waveViewer1.WaveStream);
+                    output = new DirectSoundOut();
+                    output.Init(stream);
+                }
+            }
+
 			if (output != null)
 			{
 				if (output.PlaybackState == PlaybackState.Playing)
@@ -106,21 +116,36 @@ namespace osu_automapper
 
 		private void openOSUFile_Click(object sender, EventArgs e)
 		{
-			Console.WriteLine("Search for .osu File");
-
+            
 			var open = new OpenFileDialog();
 			open.Filter = "OSU file (*.osu)|*.osu;";
 
 			if (open.ShowDialog() != DialogResult.OK) { return; }
+            Console.WriteLine("Opening .osb/.mp3 files...");
 
 			// If path is good, lets get the file contents.     
 			if (!open.CheckPathExists)
 			{
-				Console.WriteLine("Error: .CheckPathExists == false");
+				Console.WriteLine("Error: Path does not exist.");
 				return;
 			}
 
-			this.beatmap = new Beatmap(open.FileName);
+            string filename = open.FileName;
+			this.beatmap = new Beatmap(filename);
+            string path = Path.GetDirectoryName(filename);
+            string mp3Name = this.beatmap.mp3Name;
+            this.mp3FilePath = Path.Combine(path, mp3Name);
+            if(mp3Name == "" || path == "")
+            {
+                Console.WriteLine("Error: Could not find mp3 file.");
+            }
+            else
+            {
+                Console.WriteLine("complete.");
+
+                WaveStream pcm = WaveFormatConversionStream.CreatePcmStream(new Mp3FileReader(this.mp3FilePath));
+                waveViewer1.WaveStream = pcm;
+            }
 		}
 
 		private void createRandomButton_Click(object sender, EventArgs e)
