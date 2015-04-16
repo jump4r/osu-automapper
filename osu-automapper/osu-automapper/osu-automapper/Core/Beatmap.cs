@@ -241,22 +241,8 @@ namespace osu_automapper
 						pos = prevPoint + RandomHelper.OnCircle(prevPoint, radius);
 					} while (!PlayField.Contains(pos));
 
-					//@ANDREW: Look at AudioAnalyzer.CreatePeakDataAt(), and AudioAnalyzer.CreatePeakData().
-					//         If you want to use music notes as you do here, use .CreatePeakDataAt().
-					//         If you want to collect all the peak data at once,
-					//         use .CreatePeakData() <--- but don't actually use this yet, it won't work right.
-					// 
-					//TODO: Now we need to consult the analyzer as we go.
-					//      Since the time interval changes (halfnote vs quarter, etc), we have to 
-					//      update the analyzer at the same interval as "timestamp"
 
-					//@Andrew: It can be used like this. 
-					//         Important Note: PeakData.value is in DECIBELS.
-					//                         So threshold should also relate to DECIBELS.
-					//       
-
-
-					////EXAMPLE (NOT TESTED):
+					////EXAMPLE USE CASE
                     double threshold = Double.Parse("-1.0E40");
 					var peakData = analyzer.CreatePeakDataAt((int)timestamp, 10000);
 					Console.WriteLine(peakData.ToString());

@@ -24,27 +24,13 @@ namespace osu_automapper
 		private BlockAlignReductionStream stream = null;
 		private DirectSoundOut output = null;
 
+        //initialization
 		public MainForm()
 		{
 			InitializeComponent();
 		}
 
-		public void LoadColors(Button button, Color fromColor, Color toColor)
-		{
-			var bmp = new Bitmap(button.Width, button.Height);
-			var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-
-			using (Graphics g = Graphics.FromImage(bmp))
-			using (var br = new LinearGradientBrush(rect, fromColor, toColor, LinearGradientMode.Vertical))
-			{
-				g.FillRectangle(br, rect);
-			}
-
-			button.ForeColor = Color.Black;
-			button.BackColor = Color.FromArgb(0, 0, 0, 0);
-			button.BackgroundImage = bmp;
-		}
-
+        //destroy the audio data
 		private void DisposeWave()
 		{
 			if (output != null)
@@ -61,6 +47,7 @@ namespace osu_automapper
 			}
 		}
 
+        //creates a random beatmap (no audio detection used)
 		private void createRandomButton_Click(object sender, EventArgs e)
 		{
 			if (beatmap == null)
@@ -71,13 +58,15 @@ namespace osu_automapper
 			beatmap.CreateRandomBeatmap();
 		}
 
-		private void waveViewer1_MouseDown(object sender, MouseEventArgs e)
+        //mouse drag helper
+		private void waveViewer_MouseDown(object sender, MouseEventArgs e)
 		{
 			prevMousePosition = MousePosition;
 			draggingWaveForm = true;
 		}
 
-		private void waveViewer1_MouseMove(object sender, MouseEventArgs e)
+        //mouse drag helper
+		private void waveViewer_MouseMove(object sender, MouseEventArgs e)
 		{
 			if (!draggingWaveForm)
 			{
@@ -94,11 +83,13 @@ namespace osu_automapper
 			waveViewer1.Width = this.Location.X + this.Width - wvp.X;
 		}
 
-		private void waveViewer1_MouseUp(object sender, MouseEventArgs e)
+        //mouse drag helper
+		private void waveViewer_MouseUp(object sender, MouseEventArgs e)
 		{
 			draggingWaveForm = false;
 		}
 
+        //shows open file dialog box
         private void openFileButton_Click(object sender, EventArgs e)
         {
             //Console.WriteLine("IMAGE CICKED");
@@ -135,6 +126,7 @@ namespace osu_automapper
             }
         }
 
+        //creates the beatmap using audio detection
         private void createButton_Click(object sender, EventArgs e)
         {
             if (this.mp3FilePath == "" || beatmap == null)
@@ -156,6 +148,7 @@ namespace osu_automapper
             this.beatmap.CreateRandomBeatmap(this.analyzer);
         }
 
+        //play or pause the selected mp3
         private void playButton_Click(object sender, EventArgs e)
         {
             if (this.mp3FilePath == null || this.mp3FilePath == "")

@@ -12,9 +12,6 @@ namespace osu_automapper
 		public int time;//Estimated time the peak occurs in ms
 		public double value;//Amplitude in decibels
 
-		//public int leftRange;
-		//public int rightRange;
-
 		public PeakData(int index, int time, double value)
 		{
 			this.index = index;

@@ -10,7 +10,6 @@ namespace osu_automapper
 {
 	public class AudioAnalyzer
 	{
-		//private WaveStream pcm;
         private AudioFileReader pcm;
 		private Beatmap beatmap;
 		private List<PeakData> peakData;
@@ -20,9 +19,7 @@ namespace osu_automapper
 		private double offsetInSeconds;
 
 		private int bytesPerSecond;
-
-		//Convert BPM to bytesPerInterval
-		//bps = bpm / 60            
+   
 		private float bps;
 		private int interval;
 
@@ -36,8 +33,8 @@ namespace osu_automapper
 		{
             this.pcm = new AudioFileReader(mp3path);
 			this.beatmap = beatmap;
+            this.offset = beatmap.offset;
 			Setup();
-            //CreatePeakData();
 		}
 
 		//Setups everything that CreatePeakData() and CreatePeakDataAt() will need.
@@ -73,13 +70,15 @@ namespace osu_automapper
 			double sum = 0;
 			for (var i = 0; i < buffer.Length; i = i + 2)
 			{
-                if (i + 1 < buffer.Length)
+                if (i + 1 < buffer.Length)//if buffer is not an even number (bitconverter reads 2 bytes)
                 {
+                    //Perform some crazy audio gibberish
                     double sample = BitConverter.ToInt16(buffer, i) / 32768.0;
                     sum += (sample * sample);
                 }
 			}
 
+            //Perform some crazy audio gibberish
 			double rms = Math.Sqrt(sum / (double)(buffer.Length / 2));
 
 			var decibel = 20 * Math.Log10(rms);
@@ -92,11 +91,9 @@ namespace osu_automapper
 			return new PeakData(index, time, decibel);
 		}
 
-		/// <summary>
 		/// This creates all the peak data at once, sampling at a constant interval
 		/// calculated from bpm. The data is stored in List<PeakData> peakData.
 		/// This is NOT flexible, peak data will be limited to the bpm interval.
-		/// </summary>
 		public List<PeakData> CreatePeakData()
 		{
 			Setup();
@@ -176,6 +173,8 @@ namespace osu_automapper
             var meanValue = data.value;
 
             Console.WriteLine("Average:" + meanValue);
+
+            throw new NotImplementedException("Dont use this yet.");
 		}
 	}
 }

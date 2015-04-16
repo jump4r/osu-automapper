@@ -65,14 +65,14 @@
             this.waveViewer1.StartPosition = ((long)(0));
             this.waveViewer1.TabIndex = 0;
             this.waveViewer1.WaveStream = null;
-            this.waveViewer1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.waveViewer1_MouseDown);
-            this.waveViewer1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.waveViewer1_MouseMove);
-            this.waveViewer1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.waveViewer1_MouseUp);
+            this.waveViewer1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.waveViewer_MouseDown);
+            this.waveViewer1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.waveViewer_MouseMove);
+            this.waveViewer1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.waveViewer_MouseUp);
             // 
             // createRandomButton
             // 
             this.createRandomButton.BackColor = System.Drawing.Color.White;
-            this.createRandomButton.Location = new System.Drawing.Point(725, 453);
+            this.createRandomButton.Location = new System.Drawing.Point(622, 453);
             this.createRandomButton.Margin = new System.Windows.Forms.Padding(5);
             this.createRandomButton.Name = "createRandomButton";
             this.createRandomButton.Size = new System.Drawing.Size(313, 34);
@@ -169,7 +169,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(2)))), ((int)(((byte)(51)))), ((int)(((byte)(143)))));
-            this.ClientSize = new System.Drawing.Size(1052, 501);
+            this.ClientSize = new System.Drawing.Size(949, 501);
             this.Controls.Add(this.playButton);
             this.Controls.Add(this.creatButton);
             this.Controls.Add(this.label3);
