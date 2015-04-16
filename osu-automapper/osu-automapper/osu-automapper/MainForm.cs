@@ -27,10 +27,6 @@ namespace osu_automapper
 		public MainForm()
 		{
 			InitializeComponent();
-			Color toColor = Color.FromArgb(255, 200, 200, 200);
-			//LoadColors(loadMP3Button, Color.White, toColor);
-			//LoadColors(pauseButton, Color.White, toColor);
-			//LoadColors(openOSUFile, Color.White, toColor);
 		}
 
 		public void LoadColors(Button button, Color fromColor, Color toColor)
@@ -49,53 +45,34 @@ namespace osu_automapper
 			button.BackgroundImage = bmp;
 		}
 
-		private void openMP3Button_Click(object sender, EventArgs e)
-		{
-			var open = new OpenFileDialog();
-			open.Filter = "MP3 file (*.mp3)|*.mp3;";
-
-			if (open.ShowDialog() != DialogResult.OK)
-			{
-				return;
-			}
-
-			DisposeWave();
-
-            this.mp3FilePath = open.FileName;
-			Console.WriteLine("Opened mp3 file: " + this.mp3FilePath);
-			WaveStream pcm = WaveFormatConversionStream.CreatePcmStream(new Mp3FileReader(this.mp3FilePath));
-            waveViewer1.WaveStream = pcm;
-			//stream = new BlockAlignReductionStream(pcm);
-			//output = new DirectSoundOut();
-			//output.Init(stream);
-			//output.Play();
-
-			pauseButton.Enabled = true;
-		}
-
 		private void pauseButton_Click(object sender, EventArgs e)
 		{
-            if(output == null)
-            {
-                if (waveViewer1.WaveStream != null)
-                {
-                    var stream = new BlockAlignReductionStream(waveViewer1.WaveStream);
-                    output = new DirectSoundOut();
-                    output.Init(stream);
-                }
-            }
+            if (this.mp3FilePath == null || this.mp3FilePath == "")
+                return;
 
-			if (output != null)
+            if (output != null)
 			{
 				if (output.PlaybackState == PlaybackState.Playing)
 				{
 					output.Pause();
+                    Console.WriteLine("Paused");
 				}
 				else if (output.PlaybackState == PlaybackState.Paused)
 				{
 					output.Play();
+                    Console.WriteLine("Played");
 				}
 			}
+
+            if(output == null)
+            {
+                WaveStream pcm = WaveFormatConversionStream.CreatePcmStream(new Mp3FileReader(this.mp3FilePath));
+                waveViewer1.WaveStream = pcm;
+                stream = new BlockAlignReductionStream(pcm);
+                output = new DirectSoundOut();
+                output.Init(stream);
+                output.Play();
+            }
 		}
 
 		private void DisposeWave()
@@ -135,6 +112,7 @@ namespace osu_automapper
             string path = Path.GetDirectoryName(filename);
             string mp3Name = this.beatmap.mp3Name;
             this.mp3FilePath = Path.Combine(path, mp3Name);
+            this.pathLabel.Text = path;
             if(mp3Name == "" || path == "")
             {
                 Console.WriteLine("Error: Could not find mp3 file.");
@@ -207,5 +185,25 @@ namespace osu_automapper
 			draggingWaveForm = false;
 		}
 
+        private void pictureBox3_Click_1(object sender, EventArgs e)
+        {
+            openOSUFile_Click(sender, e);
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            //Console.WriteLine("IMAGE CICKED");
+            openOSUFile_Click(sender, e);
+        }
+
+        private void pictureBox3_Click(object sender, EventArgs e)
+        {
+            createButton_Click(sender, e);
+        }
+
+        private void pictureBox4_Click(object sender, EventArgs e)
+        {
+            pauseButton_Click(sender, e);
+        }
 	}
 }
