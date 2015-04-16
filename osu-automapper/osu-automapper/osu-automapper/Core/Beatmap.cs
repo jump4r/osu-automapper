@@ -242,6 +242,9 @@ namespace osu_automapper
 				while (timestamp < songLength)
 				{
 					Vector2 pos = Vector2.Zero;
+                    float x = RandomHelper.Range(Beatmap.PlayField.Left, Beatmap.PlayField.Right + 1);
+                    float y = RandomHelper.Range(Beatmap.PlayField.Top, Beatmap.PlayField.Bottom + 1);
+                    bool newCombo = false;
 
 					//Gets a point on a circle whose center lies at the previous point.
 					do
@@ -253,7 +256,7 @@ namespace osu_automapper
 
 
 					////EXAMPLE USE CASE
-                    double threshold = Double.Parse("-1.0E40");
+                    double threshold = Double.Parse("-10");
 					var peakData = analyzer.CreatePeakDataAt((int)timestamp, 10000);
 					Console.WriteLine(peakData.ToString());
 					if (peakData.value < threshold)
@@ -263,12 +266,18 @@ namespace osu_automapper
 						continue;
 					}
 					////END EXAMPLE
+                    // Determine if new Combo is needed
+                    if (currentComboLength > comboChangeFlag)
+                    {
+                        newCombo = true;
+                        currentComboLength = currentComboLength % comboChangeFlag;
+                    }
 
 					if (currentBeat % beatsPerMeasure == 0)
 					{
 						// Generate a random slider.
 						var sliderType = EnumHelper.GetRandom<SliderCurveType>(); //sliderTypes[rnd.Next(0, 3)];
-                        float sliderTimespan = (RandomHelper.NextFloat < 0.5f) ? NoteDuration.Quarter : NoteDuration.Half;
+                        float sliderTimespan = (RandomHelper.NextFloat < 0.5f) ? NoteDuration.Quarter : NoteDuration.Eighth;
 						string sliderData = GetSliderData(pos, (int)timestamp, HitObjectType.Slider,
 												HitObjectSoundType.None, sliderType, 1, sliderVelocity, RandomHelper.Range(minSliderCurves, maxSliderCurves + 1), sliderTimespan);
 
@@ -276,23 +285,43 @@ namespace osu_automapper
 
 						numCircles++;
 
-						timestamp += AddTime(sliderTimespan);
-						currentBeat += (int)sliderTimespan;
+						timestamp += AddTime(sliderTimespan * 2);
+						currentBeat += sliderTimespan * 2;
+                        currentComboLength += sliderTimespan * 2;
 					}
-					else
-					{
-						string circleData = GetHitCircleData(pos, (int)timestamp, HitObjectType.Normal,
-												HitObjectSoundType.None, prevPoint);
+                    else
+                    {
+                        HitObjectType hitType = (newCombo) ? HitObjectType.NormalNewCombo : HitObjectType.Normal;
 
-						osuFile.WriteLine(circleData);
+                        // Test patterns!
+                        if (RandomHelper.NextFloat < 0.12)
+                        {
+                            Triple triple = new Triple(PlayField.Center, (int)timestamp, HitObjectSoundType.None, prevPoint, mpb);
+                            osuFile.WriteLine(triple.SerializeForOsu());
 
-						numCircles++;
+                            currentComboLength += triple.totalLength;
+                            timestamp += AddTime(triple.totalLength);
+                            currentBeat += triple.totalLength;
 
-						timestamp += AddTime(NoteDuration.Quarter);
-						currentBeat += (int)NoteDuration.Quarter;
+                            prevPoint = PlayField.Center;
+                        }
 
-						prevPoint = pos;
-					}
+                        else
+                        {
+                            string circleData = GetHitCircleData(new Vector2(x, y), (int)timestamp, hitType,
+                                                    HitObjectSoundType.None, prevPoint);
+
+                            osuFile.WriteLine(circleData);
+
+                            numCircles++;
+
+                            currentComboLength += NoteDuration.Eighth;
+                            timestamp += AddTime(NoteDuration.Eighth);
+                            currentBeat += NoteDuration.Eighth;
+
+                            prevPoint = new Vector2(x, y);
+                        }
+                    }
 				}
 
 				Console.WriteLine("Number of circles " + numCircles);
