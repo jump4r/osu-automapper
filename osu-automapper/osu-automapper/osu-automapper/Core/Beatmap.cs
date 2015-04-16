@@ -148,23 +148,33 @@ namespace osu_automapper
                     }
                     Console.WriteLine("currentBeat" + currentBeat);
 
+                    /*
+                    float getBeatType = RandomHelper.NextFloat;
+                    if (getBeatType < 0.05f)
+                    {
+                        timestamp += AddTime(NoteDuration.Quarter);
+                        currentBeat += NoteDuration.Quarter;
+                        continue;
+                    }
+                    */
+
 					if (currentBeat % beatsPerMeasure == 0)
 					{
-						// Generate a random slider.
+						// Generate a random slider. // Test Random Slider Durations
 						var sliderType = EnumHelper.GetRandom<SliderCurveType>();
                         HitObjectType hitType = (newCombo) ? HitObjectType.SliderNewCombo : HitObjectType.Slider;
-                        
 
+                        float sliderTimespan = (RandomHelper.NextFloat < 0.5f) ? NoteDuration.Quarter : NoteDuration.Eighth;
 						string sliderData = GetSliderData(new Vector2(x, y), (int)timestamp, hitType,
-												HitObjectSoundType.None, sliderType, 1, sliderVelocity, RandomHelper.Range(minSliderCurves, maxSliderCurves + 1));
+												HitObjectSoundType.None, sliderType, 1, sliderVelocity, RandomHelper.Range(minSliderCurves, maxSliderCurves + 1), sliderTimespan);
 
 						osuFile.WriteLine(sliderData);
 
 						numCircles++;
 
-						timestamp += AddTime(NoteDuration.Half);
-						currentBeat += NoteDuration.Half;
-                        currentComboLength += NoteDuration.Half;
+						timestamp += AddTime(sliderTimespan * 2);
+						currentBeat += sliderTimespan * 2;
+                        currentComboLength += sliderTimespan * 2;
 
 					}
 					else
@@ -258,15 +268,16 @@ namespace osu_automapper
 					{
 						// Generate a random slider.
 						var sliderType = EnumHelper.GetRandom<SliderCurveType>(); //sliderTypes[rnd.Next(0, 3)];
+                        float sliderTimespan = (RandomHelper.NextFloat < 0.5f) ? NoteDuration.Quarter : NoteDuration.Half;
 						string sliderData = GetSliderData(pos, (int)timestamp, HitObjectType.Slider,
-												HitObjectSoundType.None, sliderType, 1, sliderVelocity, RandomHelper.Range(minSliderCurves, maxSliderCurves + 1));
+												HitObjectSoundType.None, sliderType, 1, sliderVelocity, RandomHelper.Range(minSliderCurves, maxSliderCurves + 1), sliderTimespan);
 
 						osuFile.WriteLine(sliderData);
 
 						numCircles++;
 
-						timestamp += AddTime(NoteDuration.Half);
-						currentBeat += (int)NoteDuration.Half;
+						timestamp += AddTime(sliderTimespan);
+						currentBeat += (int)sliderTimespan;
 					}
 					else
 					{
@@ -302,10 +313,10 @@ namespace osu_automapper
 		}
 
 		public string GetSliderData(Vector2 startPosition, int time, HitObjectType hitType,
-			HitObjectSoundType hitsound, SliderCurveType sliderType, int repeat, float sliderVelocity, int numCurves)
+			HitObjectSoundType hitsound, SliderCurveType sliderType, int repeat, float sliderVelocity, int numCurves, float timeSpan)
 		{
 			// Length will determine how long a slider will go on for
-			int len = (int)(sliderVelocity * 100);
+			int len = (int)(sliderVelocity * 100 * timeSpan);
 			var hs = new HitSlider(startPosition, time, hitType, hitsound, sliderType, repeat, sliderVelocity, numCurves, len);
 
 			return hs.SerializeForOsu();
