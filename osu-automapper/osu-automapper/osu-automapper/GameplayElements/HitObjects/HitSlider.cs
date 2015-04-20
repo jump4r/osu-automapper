@@ -7,6 +7,9 @@ using System.Drawing;
 
 namespace osu_automapper
 {
+    /// <summary>
+    /// Representation of the HitSlider Object in osu. 
+    /// </summary>
 	class HitSlider : HitObject
 	{
 		// Properties
@@ -44,6 +47,10 @@ namespace osu_automapper
 			ConstructSlider();
 		}
 
+        /// <summary>
+        /// Choose the SliderCurveType based off of the SliderType Variable. Construct Slider based off of
+        /// Slidertype.
+        /// </summary>
 		private void ConstructSlider()
 		{
 			switch (SliderType)
@@ -62,6 +69,9 @@ namespace osu_automapper
 			}
 		}
 
+        /// <summary>
+        /// Generate slider without any curves whatsoever. Simply connecting two points. 
+        /// </summary>
 		private void GenerateLinearSlider()
 		{
 			float angle = validAngles[RandomHelper.Range(0, validAngles.Length)];
@@ -73,18 +83,27 @@ namespace osu_automapper
 			curvePoints.Add(endPoint);
 		}
 
+        /// <summary>
+        /// Generate slider with different curves moving thoughout the slider.
+        /// </summary>
 		private void GenerateBezierSlider()
 		{
 			int angleIndex = RandomHelper.Range(0, validAngles.Length);
 			Console.WriteLine("NEW Angle Here:");
 			Console.WriteLine("Start Point - x: " + Position.X + ", y: " + Position.Y);
 
+            // Add a slider point for each predetermined curve.
 			for (int i = 0; i < NumCurves; i++)
 			{
 				curvePoints.Add(AddBezierSliderPoint(angleIndex));
 			}
 		}
 
+        /// <summary>
+        /// Code to actually add a slider point
+        /// </summary>
+        /// <param name="angleIndex"> Angle applied to determine where the new slider point is. </param>
+        /// <returns> Returns Vec2 position to add the curve at. </returns>
 		private Vector2 AddBezierSliderPoint(int angleIndex)
 		{
 			int offset = RandomHelper.Range(-1, 2);
@@ -126,6 +145,10 @@ namespace osu_automapper
 			return Position;
 		}
 
+        /// <summary>
+        /// Override string function to return string readable by .osu file format.
+        /// </summary>
+        /// <returns></returns>
 		public override string SerializeForOsu()
 		{
 			var builder = new StringBuilder();

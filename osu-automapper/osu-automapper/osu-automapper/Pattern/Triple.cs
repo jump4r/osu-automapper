@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace osu_automapper
 {
+    /// <summary>
+    /// Triple pattern class, inherited from the BasePatern
+    /// 3 16th-notes stacked in a slightly offset pattern. 
+    /// </summary>
     class Triple : BasePattern
     {
         int xOffset = RandomHelper.Range(-3, 3);
@@ -14,6 +18,15 @@ namespace osu_automapper
         List<HitCircle> hitCircles = new List<HitCircle>();
 
         public Triple() { }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="startPos">Start Position</param>
+        /// <param name="time">Time (Millisecond)</param>
+        /// <param name="hitSound">HitObjectSound</param>
+        /// <param name="prevPoint">Previous Point</param>
+        /// <param name="mpb">Milliseconds per beat</param>
         public Triple(Vector2 startPos, int time, HitObjectSoundType hitSound, Vector2 prevPoint, float mpb) // Simplest pattern, let's implement this first.
         {
             totalLength = NoteDuration.Quarter;
@@ -46,6 +59,10 @@ namespace osu_automapper
             }
         }
 
+        /// <summary>
+        /// Overrite string to an .osu file readable format.
+        /// </summary>
+        /// <returns></returns>
         public override string SerializeForOsu()
         {
             string rtn = "";

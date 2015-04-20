@@ -15,6 +15,10 @@ namespace osu_automapper
 		public int HitType { get; set; }
 		public int HitSound { get; set; }
 
+        /// <summary>
+        /// Overrite string to an .osu file readable format.
+        /// </summary>
+        /// <returns></returns>
 		public abstract string SerializeForOsu();
 	}
 }

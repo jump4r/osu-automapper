@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace osu_automapper
 {
+    /// <summary>
+    /// Static class for NoteDuration, Given 4/4 time signature.
+    /// Whole: Represents 1 measure.
+    /// Sixteenth: Represents 16th note (1/16 measure)
+    /// </summary>
 	public static class NoteDuration
 	{
 		public static readonly float Whole = 4f;

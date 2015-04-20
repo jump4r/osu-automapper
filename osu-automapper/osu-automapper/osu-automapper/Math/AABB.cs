@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace osu_automapper
 {
+    /// <summary>
+    /// Definition of the playfield in which the beatmap is generated in.
+    /// </summary>
 	public class AABB
 	{
 		public Vector2 Center { get; set; }

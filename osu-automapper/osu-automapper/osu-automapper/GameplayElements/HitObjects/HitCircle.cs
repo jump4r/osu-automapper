@@ -7,12 +7,26 @@ using System.Drawing;
 
 namespace osu_automapper
 {
+    /// <summary>
+    /// Representation for HitCirlce Game Object.
+    /// </summary>
 	class HitCircle : HitObject
 	{
 		public Vector2 PrevPos { get; set; }
 		public float MaxDistance { get; set; }
 
 		public HitCircle() { }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="position">Hit object position</param>
+        /// <param name="time">Time (Millisecond)</param>
+        /// <param name="hitType">Hit Object Type</param>
+        /// <param name="hitSound">Hit Object Sound Type</param>
+        /// <param name="prevPoint">Previous Point (Reference)</param>
+        /// <param name="maxDistance">Max distance between HitObjects</param>
+        /// <param name="patternSkip">(Default = false) Determine whether to skip Point Calculation if Cirlce is a part of a pattern.</param>
 		public HitCircle(Vector2 position, int time, HitObjectType hitType, HitObjectSoundType hitSound, Vector2 prevPoint, float maxDistance, bool patternSkip = false)
 		{
 			Position = position;
@@ -29,6 +43,10 @@ namespace osu_automapper
             }
 		}
 
+        /// <summary>
+        /// Calculate New Hit Point based off of Max Distance. 
+        /// If the HitObject is part of a pattern, then skip this step
+        /// </summary>
 		private void CalculateHitPoint()
 		{
 			if (PrevPos.X == -1)
@@ -45,6 +63,7 @@ namespace osu_automapper
 			Position = PrevPos + new Vector2(x, y);
 			var playField = Beatmap.PlayField;
 
+            // Corrections for if HitObject is offscreen.
 			if (!playField.Contains(Position))
 			{
 				Vector2 heading = Position - oldPos;
@@ -66,6 +85,10 @@ namespace osu_automapper
 		//}
 		//funciton 
 
+        /// <summary>
+        /// Overrite string to an .osu file readable format.
+        /// </summary>
+        /// <returns></returns>
 		public override string SerializeForOsu()
 		{
 			return string.Format("{0},{1},{2},{3},{4},0:0:0:0:", MathHelper.RoundToInt(Position.X), MathHelper.RoundToInt(Position.Y), Time, (int)HitType, (int)HitSound);

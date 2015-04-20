@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 namespace osu_automapper
 {
 	[Flags]
+
+    // Enum for the HitObjectType
 	public enum HitObjectType
 	{
 		Normal = 1 << 0,

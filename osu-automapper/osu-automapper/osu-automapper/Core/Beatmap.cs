@@ -9,12 +9,15 @@ using NAudio.Wave;
 
 namespace osu_automapper
 {
+    /// <summary>
+    /// Declares the initial beatmap for generation. 
+    /// </summary>
 	public class Beatmap
 	{
 		public static AABB PlayField = new AABB(new Vector2(255f, 190f), new Vector2(245f, 180f));
 
 		// Beat map text
-		// TODO: Replace string array with file?
+		// TODO: Replace string array with file?z
 		private string[] fileData;
 
 		private string filePath;
@@ -44,6 +47,10 @@ namespace osu_automapper
 
 		//private char[] sliderTypes = new char[] { 'L', 'B', 'P' };
 
+        /// <summary>
+        /// Beatmap contsructor
+        /// </summary>
+        /// <param name="filePath"> Takes a filePath, can get all metadate from .osu file.</param>
 		public Beatmap(string filePath)
 		{
 			// TODO: Complete member initialization
