@@ -27,10 +27,10 @@ namespace osu_automapper
         /// <param name="hitSound">HitObjectSound</param>
         /// <param name="prevPoint">Previous Point</param>
         /// <param name="mpb">Milliseconds per beat</param>
-        public Triple(Vector2 startPos, int time, HitObjectSoundType hitSound, Vector2 prevPoint, float mpb) // Simplest pattern, let's implement this first.
+        public Triple(Vector2 startPos, int time, HitObjectSoundType hitSound, Vector2 prevPoint, float mpb, Difficulty difficulty) // Simplest pattern, let's implement this first.
         {
-            totalLength = NoteDuration.Quarter;
-            subsetLength = NoteDuration.Sixteenth;
+            totalLength = difficulty.baseCircleTimestamp * 2.0f; // NoteDuration.Quarter;
+            subsetLength = difficulty.baseCircleTimestamp / 2.0f; // NoteDuration.Sixteenth;
 
             this.mpb = mpb;
 

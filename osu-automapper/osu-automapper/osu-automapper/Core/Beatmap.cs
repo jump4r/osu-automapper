@@ -45,6 +45,9 @@ namespace osu_automapper
 		private int minSliderCurves = 2;
 		private int maxSliderCurves = 4;
 
+        private int ar;
+        private ApproachRate approachRate; // Represents approach rate for different difficulties.
+        private Difficulty difficulty;
 		//private char[] sliderTypes = new char[] { 'L', 'B', 'P' };
 
         /// <summary>
@@ -102,6 +105,11 @@ namespace osu_automapper
 					    Console.WriteLine("Total Song Length is: " + songLength);
                         break;
                     case "[Difficulty]":
+                        string[] approachRateText = fileData[i + 4].Split(':');
+                        ar = int.Parse(approachRateText[1]);
+                        Console.WriteLine("Approach Rate is " + ar);
+                        approachRate = Difficulty.Calculate(ar);
+                        difficulty = new Difficulty(approachRate);
 
                         string[] sliderVelText = fileData[i + 5].Split(':');
 					    sliderVelocity = float.Parse(sliderVelText[1]);
@@ -171,7 +179,7 @@ namespace osu_automapper
 						var sliderType = EnumHelper.GetRandom<SliderCurveType>();
                         HitObjectType hitType = (newCombo) ? HitObjectType.SliderNewCombo : HitObjectType.Slider;
 
-                        float sliderTimespan = (RandomHelper.NextFloat < 0.5f) ? NoteDuration.Quarter : NoteDuration.Eighth;
+                        float sliderTimespan = (RandomHelper.NextFloat < 0.5f) ? difficulty.sliderTimestamp1 : difficulty.sliderTimestamp2;
 						string sliderData = GetSliderData(new Vector2(x, y), (int)timestamp, hitType,
 												HitObjectSoundType.None, sliderType, 1, sliderVelocity, RandomHelper.Range(minSliderCurves, maxSliderCurves + 1), sliderTimespan);
 
@@ -191,7 +199,7 @@ namespace osu_automapper
                         // Test patterns!
                         if (RandomHelper.NextFloat < 0.12)
                         {
-                            Triple triple = new Triple(PlayField.Center, (int)timestamp, HitObjectSoundType.None, prevPoint, mpb);
+                            Triple triple = new Triple(PlayField.Center, (int)timestamp, HitObjectSoundType.None, prevPoint, mpb, difficulty);
                             osuFile.WriteLine(triple.SerializeForOsu());
 
                             currentComboLength += triple.totalLength;
@@ -210,9 +218,9 @@ namespace osu_automapper
 
                             numCircles++;
 
-                            currentComboLength += NoteDuration.Eighth;
-                            timestamp += AddTime(NoteDuration.Eighth);
-                            currentBeat += NoteDuration.Eighth;
+                            currentComboLength += difficulty.baseCircleTimestamp;
+                            timestamp += AddTime(difficulty.baseCircleTimestamp);
+                            currentBeat += difficulty.baseCircleTimestamp;
 
                             prevPoint = new Vector2(x, y);
                         }
@@ -284,7 +292,7 @@ namespace osu_automapper
 					{
 						// Generate a random slider.
 						var sliderType = EnumHelper.GetRandom<SliderCurveType>(); //sliderTypes[rnd.Next(0, 3)];
-                        float sliderTimespan = (RandomHelper.NextFloat < 0.5f) ? NoteDuration.Quarter : NoteDuration.Eighth;
+                        float sliderTimespan = (RandomHelper.NextFloat < 0.5f) ? difficulty.sliderTimestamp1 : difficulty.sliderTimestamp2;
 						string sliderData = GetSliderData(pos, (int)timestamp, HitObjectType.Slider,
 												HitObjectSoundType.None, sliderType, 1, sliderVelocity, RandomHelper.Range(minSliderCurves, maxSliderCurves + 1), sliderTimespan);
 
@@ -303,7 +311,7 @@ namespace osu_automapper
                         // Test patterns!
                         if (RandomHelper.NextFloat < 0.12)
                         {
-                            Triple triple = new Triple(PlayField.Center, (int)timestamp, HitObjectSoundType.None, prevPoint, mpb);
+                            Triple triple = new Triple(PlayField.Center, (int)timestamp, HitObjectSoundType.None, prevPoint, mpb, difficulty);
                             osuFile.WriteLine(triple.SerializeForOsu());
 
                             currentComboLength += triple.totalLength;
@@ -322,9 +330,9 @@ namespace osu_automapper
 
                             numCircles++;
 
-                            currentComboLength += NoteDuration.Eighth;
-                            timestamp += AddTime(NoteDuration.Eighth);
-                            currentBeat += NoteDuration.Eighth;
+                            currentComboLength += difficulty.baseCircleTimestamp;
+                            timestamp += AddTime(difficulty.baseCircleTimestamp);
+                            currentBeat += difficulty.baseCircleTimestamp;
 
                             prevPoint = new Vector2(x, y);
                         }
