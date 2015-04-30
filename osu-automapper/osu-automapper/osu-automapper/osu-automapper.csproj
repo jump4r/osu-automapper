@@ -76,6 +76,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Pattern\BasePattern.cs" />
+    <Compile Include="Pattern\Square.cs" />
     <Compile Include="Pattern\Triple.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

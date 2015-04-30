@@ -1,0 +1,61 @@
+osu file format v14
+
+[General]
+AudioFilename: dr xyu.mp3
+AudioLeadIn: 0
+PreviewTime: 21474
+Countdown: 0
+SampleSet: Soft
+StackLeniency: 0.7
+Mode: 0
+LetterboxInBreaks: 1
+WidescreenStoryboard: 1
+
+[Editor]
+Bookmarks: 11129,22163,33198,44232,55267,60784,66301,77336,88370,99405,110439,121474,132508
+DistanceSpacing: 0.9
+BeatDivisor: 4
+GridSize: 4
+TimelineZoom: 2.599999
+
+[Metadata]
+Title:Dr. Who! (Smooth Remix)
+TitleUnicode:Dr. Who! (Smooth Remix)
+Artist:Tujamo & Plastik Funk feat. Sneakbo
+ArtistUnicode:Tujamo & Plastik Funk feat. Sneakbo
+Creator:Natteke
+Version:AUTO-notimingpoints
+Source:
+Tags:grime dnb drum and bass trap ticclick zare Aleks719 Zarerion Irreversible
+BeatmapID:0
+BeatmapSetID:-1
+
+[Difficulty]
+HPDrainRate:7
+CircleSize:4
+OverallDifficulty:8
+ApproachRate:8
+SliderMultiplier:0.999999999999999
+SliderTickRate:1
+
+[Events]
+//Background and Video events
+0,0,"bg.jpg",0,0
+//Break Periods
+//Storyboard Layer 0 (Background)
+//Storyboard Layer 1 (Fail)
+//Storyboard Layer 2 (Pass)
+//Storyboard Layer 3 (Foreground)
+//Storyboard Sound Samples
+
+[TimingPoints]
+102,344.827586206897,4,2,1,70,1,0
+
+
+[Colours]
+Combo1 : 17,254,176
+Combo2 : 173,255,95
+Combo3 : 255,88,100
+Combo4 : 255,94,55
+
+[HitObjects]

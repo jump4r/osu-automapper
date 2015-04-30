@@ -9,8 +9,8 @@ namespace osu_automapper
     // Sets the difficulty relative to the ApproachRate.
      public enum ApproachRate
         {
-            EASY = 3,
-            NORMAL = 5,
+            EASY = 4,
+            NORMAL = 6,
             HARD = 8,
             INSANE = 9,
             EXTRA = 10,
@@ -32,8 +32,8 @@ namespace osu_automapper
             {
                 case ApproachRate.EASY:
                     baseCircleTimestamp = NoteDuration.Half;
-                    sliderTimestamp1 = NoteDuration.Whole;
-                    sliderTimestamp2 = NoteDuration.Half;
+                    sliderTimestamp1 = NoteDuration.Half;
+                    sliderTimestamp2 = NoteDuration.Quarter;
                     break;
                 case ApproachRate.NORMAL:
                     baseCircleTimestamp = NoteDuration.Half;
