@@ -33,7 +33,10 @@ namespace osu_automapper
 		private float currentBeat = 0;
 		private int beatsPerMeasure = 4;
 		private float sliderVelocity = 1.5f;
+        private float sliderVelocityMultiplier;
 		private int sliderLengthPerBeat;
+        private List<TimingPoint> timingPoints = new List<TimingPoint>();
+        private TimingPoint currentTimingPoint;
 
         // Used for combo resets
         private float comboChangeFlag = NoteDuration.Whole * 2; // Change combo every 2 measures
@@ -49,6 +52,8 @@ namespace osu_automapper
         private ApproachRate approachRate; // Represents approach rate for different difficulties.
         private Difficulty difficulty;
 		//private char[] sliderTypes = new char[] { 'L', 'B', 'P' };
+
+        private bool beatmapOccupied = false;
 
         /// <summary>
         /// Beatmap contsructor
@@ -95,15 +100,31 @@ namespace osu_automapper
                         string[] initTimingPonits = fileData[i + 1].Split(',');
 					    mpb = float.Parse(initTimingPonits[1]);
 					    offset = int.Parse(initTimingPonits[0]);
-                        break;
-                    case "[General]":
 
+                        // Collect all Timing Points
+                        int timingPointIndex = i + 2;
+                        int timingNumber = 0;
+                        string timingPointText = fileData[timingPointIndex];
+
+                        while (!String.IsNullOrWhiteSpace(timingPointText))
+                        {
+                            Console.WriteLine("Add Timing Point");
+                            string[] timingPointSplit = timingPointText.Split(',');
+                            timingPoints.Add(new TimingPoint(int.Parse(timingPointSplit[0]), true, float.Parse(timingPointSplit[1]), timingNumber));
+                            timingPointIndex++;
+                            timingNumber++;
+                            timingPointText = fileData[timingPointIndex];
+                        }
+                        break;
+
+                    case "[General]":
                         string mp3FilePath = GetPath(fileData[i + 1], Path.GetDirectoryName(filePath));
 					    WaveStream pcm = WaveFormatConversionStream.CreatePcmStream(new Mp3FileReader(mp3FilePath));
                         TimeSpan ts = pcm.TotalTime;
 					    songLength = ((ts.Minutes * 60) + ts.Seconds) * 1000 + ts.Milliseconds;
 					    Console.WriteLine("Total Song Length is: " + songLength);
                         break;
+
                     case "[Difficulty]":
                         string[] approachRateText = fileData[i + 4].Split(':');
                         ar = int.Parse(approachRateText[1]);
@@ -115,6 +136,15 @@ namespace osu_automapper
 					    sliderVelocity = float.Parse(sliderVelText[1]);
 					    Console.WriteLine("Slider Velocity is: " + sliderVelocity);
                         break;
+
+                    case "[HitObjects]":
+                        if (!String.IsNullOrWhiteSpace(fileData[i+1]))
+                        {
+                            Console.WriteLine("Beatmap already contains HitObjects " + fileData[i+1]);
+                            beatmapOccupied = true;
+                        }
+                        break;
+
                     default:
                         break;
                 }
@@ -242,6 +272,12 @@ namespace osu_automapper
 				return;
 			}
 
+            if (beatmapOccupied)
+            {
+                Console.WriteLine("Error: Beatmap already occupied with HitObjects, Clear all objects before continuing");
+                return;
+            }
+
 			Console.WriteLine("Generating Random Beatmap. Appending to file..." + this.filePath);
 
 			using (var osuFile = new StreamWriter(this.filePath, true))
@@ -250,7 +286,7 @@ namespace osu_automapper
 
 				// Basic Beatmap Creation
 				var prevPoint = PlayField.GetRandomPointInside();
-
+                currentTimingPoint = (timingPoints.Count > 0) ? timingPoints[0] : null;
 				float timestamp = (float)offset;
 
 				// for (float timestamp = (float)offset; timestamp < songLength; timestamp += mpb)
@@ -260,6 +296,9 @@ namespace osu_automapper
                     float x = RandomHelper.Range(Beatmap.PlayField.Left, Beatmap.PlayField.Right + 1);
                     float y = RandomHelper.Range(Beatmap.PlayField.Top, Beatmap.PlayField.Bottom + 1);
                     bool newCombo = false;
+
+                    if (currentTimingPoint != null)
+                        currentTimingPoint = TimingPoint.UpdateCurrentTimingPoint((int)timestamp, timingPoints, currentTimingPoint);
 
 					//Gets a point on a circle whose center lies at the previous point.
 					do
@@ -280,6 +319,8 @@ namespace osu_automapper
 						timestamp += AddTime(NoteDuration.Half);
 						continue;
 					}
+
+                    
 					////END EXAMPLE
                     // Determine if new Combo is needed
                     if (currentComboLength > comboChangeFlag)
@@ -294,7 +335,7 @@ namespace osu_automapper
 						var sliderType = EnumHelper.GetRandom<SliderCurveType>(); //sliderTypes[rnd.Next(0, 3)];
                         float sliderTimespan = (RandomHelper.NextFloat < 0.5f) ? difficulty.sliderTimestamp1 : difficulty.sliderTimestamp2;
 						string sliderData = GetSliderData(pos, (int)timestamp, HitObjectType.Slider,
-												HitObjectSoundType.None, sliderType, 1, sliderVelocity, RandomHelper.Range(minSliderCurves, maxSliderCurves + 1), sliderTimespan);
+                                                HitObjectSoundType.None, sliderType, 1, sliderVelocity * currentTimingPoint.SliderVelocityMultiplier, RandomHelper.Range(minSliderCurves, maxSliderCurves + 1), sliderTimespan);
 
 						osuFile.WriteLine(sliderData);
 

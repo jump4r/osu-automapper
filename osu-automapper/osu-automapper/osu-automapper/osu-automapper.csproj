@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameplayElements\TimingPoint.cs" />
     <Compile Include="Helpers\Difficulty.cs" />
     <Compile Include="Math\AABB.cs" />
     <Compile Include="Core\AudioAnalyzer.cs" />
